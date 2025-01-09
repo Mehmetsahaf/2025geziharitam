@@ -1,0 +1,2387 @@
+﻿@{
+    ViewData["Title"] = "Türkiye Haritası";
+}
+
+<div class="map-stats-container">
+    <!-- Harita Container -->
+    <div class="map-container">
+        <object id="turkey-map" data="/tr.svg" type="image/svg+xml">
+            <img src="/tr.svg" alt="Türkiye Haritası" />
+        </object>
+        <div id="city-tooltip"></div>
+    </div>
+
+    <!-- İstatistik Paneli -->
+    <div class="stats-panel">
+        <div class="stats-card">
+            <div class="stats-header">
+                <h4>Gezilme Oranları</h4>
+                <div class="total-progress">
+                    <div class="progress">
+                        <div id="turkeyProgress" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="visitedCityCount">0</span>/<span id="totalCityCount">81</span> Şehir
+                    </div>
+                </div>
+            </div>
+
+            <div class="region-stats">
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>Marmara</span>
+                        <span id="marmaraPercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="marmaraProgress" class="progress-bar bg-marmara" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>Ege</span>
+                        <span id="egePercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="egeProgress" class="progress-bar bg-ege" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>Akdeniz</span>
+                        <span id="akdenizPercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="akdenizProgress" class="progress-bar bg-akdeniz" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>İç Anadolu</span>
+                        <span id="icAnadoluPercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="icAnadoluProgress" class="progress-bar bg-ic-anadolu" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>Karadeniz</span>
+                        <span id="karadenizPercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="karadenizProgress" class="progress-bar bg-karadeniz" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>Doğu Anadolu</span>
+                        <span id="doguAnadoluPercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="doguAnadoluProgress" class="progress-bar bg-dogu-anadolu" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="region-stat">
+                    <div class="region-header">
+                        <span>Güneydoğu Anadolu</span>
+                        <span id="guneydoguPercent">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="guneydoguProgress" class="progress-bar bg-guneydogu" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Şehir Bilgi Modalı -->
+<div class="modal fade" id="visitModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title selected-city-name"></h4>
+                <div class="modal-actions">
+                    <div class="visit-toggle">
+                        <input class="visit-toggle-input" type="checkbox" id="visitedCheckbox" onchange="toggleVisitDetails()">
+                        <label class="visit-toggle-label" for="visitedCheckbox">
+                            <i class="bi bi-check-lg"></i>
+                            <span>Bu Şehri Gezdim</span>
+                        </label>
+                    </div>
+                    <button class="btn-note" onclick="showNoteModal()">
+                        <i class="bi bi-journal-text"></i>
+                        Gezi Notlarım
+                    </button>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Şehir Bilgisi -->
+                <div id="cityInfo">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="info-card">
+                                <div class="info-card-header">
+                                    <i class="bi bi-egg-fried"></i>
+                                    <h5>Meşhur Yemekleri</h5>
+                                </div>
+                                <div class="info-card-body">
+                                    <div id="cityDishes"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-card">
+                                <div class="info-card-header">
+                                    <i class="bi bi-buildings"></i>
+                                    <h5>İlçeleri</h5>
+                                </div>
+                                <div class="info-card-body">
+                                    <div id="cityDistricts"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-card">
+                                <div class="info-card-header">
+                                    <i class="bi bi-geo-alt"></i>
+                                    <h5>Gezilecek Yerler</h5>
+                                </div>
+                                <div class="info-card-body">
+                                    <div id="cityPlaces"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gezi Notu Modalı -->
+<div class="modal fade" id="noteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Gezi Notlarım - <span class="selected-city-name"></span></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="note-form">
+                    <div class="mb-3">
+                        <label class="form-label">Gezi Tarihi</label>
+                        <input type="date" class="form-control" id="noteDate">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gezi Notum</label>
+                        <textarea class="form-control" id="noteText" rows="5" placeholder="Gezinizle ilgili notlarınızı buraya yazabilirsiniz..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Denediğim Yemekler</label>
+                        <textarea class="form-control" id="foodNotes" rows="3" placeholder="Denediğiniz yerel lezzetleri yazın..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gezdiğim Yerler</label>
+                        <textarea class="form-control" id="placeNotes" rows="3" placeholder="Gezdiğiniz yerleri yazın..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="saveNote()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kaydetme başarılı toast mesajı için HTML -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="saveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong class="me-auto">Başarıyla Kaydedildi!</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            <i class="bi bi-check-circle-fill text-success"></i>
+            Ziyaret bilgileri başarıyla kaydedildi.
+        </div>
+    </div>
+</div>
+
+<div class="share-button-container">
+    <button class="btn-share" onclick="showShareModal()">
+        <i class="bi bi-share-fill"></i>
+        Gezilerim
+    </button>
+</div>
+
+<!-- Paylaşım Modalı -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Gezi İstatistiklerim</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="share-stats-container">
+                    <!-- Gezi İstatistikleri -->
+                    <div class="share-stats">
+                        <div class="share-header">
+                            <h2>2025 Gezi Özetim</h2>
+                            <p>Türkiye'de keşfettiğim yerler</p>
+                        </div>
+                        
+                        <div class="share-progress">
+                            <div class="share-progress-title">Toplam Gezilen Şehir</div>
+                            <div class="share-progress-value">
+                                <span id="shareVisitedCount">0</span>/<span>81</span>
+                            </div>
+                            <div class="progress share-progress-bar">
+                                <div id="shareTotalProgress" class="progress-bar" role="progressbar"></div>
+                            </div>
+                        </div>
+
+                        <div class="share-regions">
+                            <div class="share-region-grid">
+                                <div class="share-region-item">
+                                    <div class="region-name">Marmara</div>
+                                    <div id="shareMarmaraProgress" class="region-progress"></div>
+                                </div>
+                                <div class="share-region-item">
+                                    <div class="region-name">Ege</div>
+                                    <div id="shareEgeProgress" class="region-progress"></div>
+                                </div>
+                                <div class="share-region-item">
+                                    <div class="region-name">Akdeniz</div>
+                                    <div id="shareAkdenizProgress" class="region-progress"></div>
+                                </div>
+                                <div class="share-region-item">
+                                    <div class="region-name">İç Anadolu</div>
+                                    <div id="shareIcAnadoluProgress" class="region-progress"></div>
+                                </div>
+                                <div class="share-region-item">
+                                    <div class="region-name">Karadeniz</div>
+                                    <div id="shareKaradenizProgress" class="region-progress"></div>
+                                </div>
+                                <div class="share-region-item">
+                                    <div class="region-name">Doğu Anadolu</div>
+                                    <div id="shareDoguProgress" class="region-progress"></div>
+                                </div>
+                                <div class="share-region-item">
+                                    <div class="region-name">Güneydoğu Anadolu</div>
+                                    <div id="shareGuneydoguProgress" class="region-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="share-map" id="shareMapContainer">
+                            <!-- Harita buraya gelecek -->
+                        </div>
+                    </div>
+
+                    <!-- Paylaşım Butonları -->
+                    <div class="share-buttons">
+                        <button class="btn-social btn-whatsapp" onclick="shareToWhatsApp()">
+                            <i class="bi bi-whatsapp"></i>
+                            WhatsApp'ta Paylaş
+                        </button>
+                        <button class="btn-social btn-instagram" onclick="shareToInstagram()">
+                            <i class="bi bi-instagram"></i>
+                            Instagram'da Paylaş
+                        </button>
+                        <button class="btn-social btn-download" onclick="downloadShareImage()">
+                            <i class="bi bi-download"></i>
+                            Görüntüyü İndir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .map-stats-container {
+        display: flex;
+        gap: 1rem;
+        height: calc(100vh - 200px);
+        margin: 1rem;
+        border-radius: 20px;
+        overflow: visible;
+    }
+
+    .map-container {
+        flex: 1;
+        position: relative;
+        padding: 0;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        max-width: 100%;
+        overflow: visible;
+        padding-bottom: 5rem;
+    }
+
+    .map-container object {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        transform: scale(0.9);
+    }
+
+    .stats-panel {
+        width: 300px;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-left: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stats-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stats-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-header h4 {
+        color: #2d5a27;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .total-progress {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .region-stats {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .region-stat {
+        background: white;
+        padding: 0.8rem;
+        border-radius: 10px;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .region-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #333;
+    }
+
+    .progress {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+
+    .progress-text {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+
+    /* Bölge renkleri */
+    .bg-marmara { background-color: #3498db; }
+    .bg-ege { background-color: #2ecc71; }
+    .bg-akdeniz { background-color: #e74c3c; }
+    .bg-ic-anadolu { background-color: #f1c40f; }
+    .bg-karadeniz { background-color: #9b59b6; }
+    .bg-dogu-anadolu { background-color: #e67e22; }
+    .bg-guneydogu { background-color: #1abc9c; }
+
+    /* Harita stilleri */
+    :root svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    :root svg path {
+        fill: #6f9c76;
+        stroke: #ffffff;
+        stroke-width: 0.5;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    :root svg path.visited {
+        fill: #e74c3c;
+    }
+
+    :root svg path:hover {
+        fill: #2d5a27;
+        transform: none;
+        transform-origin: center;
+    }
+
+    :root svg path.visited:hover {
+        fill: #c0392b;
+    }
+
+    #city-tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        pointer-events: none;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        transition: all 0.2s ease;
+    }
+
+    /* Scrollbar stilleri */
+    .region-stats::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .region-stats::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .region-stats::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .region-stats::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    .modal-header {
+        position: relative;
+        background: linear-gradient(135deg, #2d5a27 0%, #3d7a37 100%);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .modal-title {
+        color: white;
+        font-size: 1.5rem;
+        margin: 0;
+        flex: 1;
+    }
+
+    .modal-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-right: 1rem;
+    }
+
+    .visit-toggle {
+        position: static;
+        transform: none;
+    }
+
+    .visit-toggle-input {
+        display: none;
+    }
+
+    .visit-toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .btn-note {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        color: white;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .visit-toggle-label:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .visit-toggle-input:checked + .visit-toggle-label {
+        background: #e74c3c;
+        border-color: #c0392b;
+    }
+
+    .visit-toggle-label i {
+        font-size: 1.2rem;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+
+    .visit-toggle-input:checked + .visit-toggle-label i {
+        opacity: 1;
+    }
+
+    .btn-close {
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-close:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Toast stilleri */
+    .toast {
+        background: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        border-radius: 12px;
+    }
+
+    .toast-header {
+        background: #2d5a27 !important;
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .toast-body {
+        padding: 1rem;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .toast-header .btn-close {
+        position: static;
+        transform: none;
+        padding: 0.5rem;
+        margin: 0;
+        background-color: transparent;
+    }
+
+    .toast-header .btn-close:hover {
+        background-color: rgba(255,255,255,0.2);
+    }
+
+    .btn-save {
+        background: #2d5a27;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 50px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+        background: #3d7a37;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(45, 90, 39, 0.2);
+    }
+
+    .btn-save:active {
+        transform: translateY(1px);
+    }
+
+    .btn-save i {
+        font-size: 1.2rem;
+    }
+
+    .info-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+
+    .info-card-header {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-card-header i {
+        font-size: 1.2rem;
+        color: #2d5a27;
+    }
+
+    .info-card-header h5 {
+        margin: 0;
+        color: #2d5a27;
+        font-weight: 600;
+    }
+
+    .info-card-body {
+        padding: 1rem;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .info-card-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .info-card-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .info-card-body::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .info-card-body::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    .info-item {
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        color: #2d5a27;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .info-item:hover {
+        background: #e9ecef;
+        transform: translateX(4px);
+    }
+
+    .info-item i {
+        font-size: 0.8rem;
+        color: #2d5a27;
+    }
+
+    .highlighted-match {
+        color: #2d5a27;
+        font-weight: 700;
+        background: rgba(45, 90, 39, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .custom-textarea {
+        width: 100%;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        resize: none;
+        transition: all 0.3s ease;
+        white-space: pre-wrap;
+    }
+
+    .custom-textarea:focus {
+        outline: none;
+        border-color: #2d5a27;
+        box-shadow: 0 0 0 2px rgba(45, 90, 39, 0.1);
+    }
+
+    .custom-textarea .highlight {
+        color: #2d5a27;
+        font-weight: 600;
+        background: rgba(45, 90, 39, 0.1);
+        border-radius: 4px;
+    }
+
+    function highlightMatches(inputElement, suggestions) {
+        const text = inputElement.value;
+        let contentEditableDiv = inputElement.nextElementSibling;
+        
+        if (!contentEditableDiv || !contentEditableDiv.classList.contains('editable-div')) {
+            contentEditableDiv = document.createElement('div');
+            contentEditableDiv.className = 'editable-div custom-textarea';
+            contentEditableDiv.contentEditable = true;
+            contentEditableDiv.style.minHeight = '80px';
+            
+            contentEditableDiv.addEventListener('input', (e) => {
+                inputElement.value = e.target.innerText;
+                highlightText(e.target, suggestions);
+            });
+            
+            contentEditableDiv.addEventListener('focus', () => {
+                contentEditableDiv.classList.add('focused');
+            });
+            
+            contentEditableDiv.addEventListener('blur', () => {
+                contentEditableDiv.classList.remove('focused');
+            });
+            
+            inputElement.style.display = 'none';
+            inputElement.parentNode.insertBefore(contentEditableDiv, inputElement.nextSibling);
+        }
+        
+        contentEditableDiv.innerText = text;
+        highlightText(contentEditableDiv, suggestions);
+        
+        // Odağı korumak için
+        if (document.activeElement === inputElement) {
+            contentEditableDiv.focus();
+        }
+    }
+
+    function highlightText(element, suggestions) {
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        
+        // Mevcut imleç pozisyonunu kaydet
+        const isCollapsed = range.collapsed;
+        const startContainer = range.startContainer;
+        const startOffset = range.startOffset;
+        
+        let text = element.innerText;
+        let html = text;
+        
+        suggestions.forEach(suggestion => {
+            const regex = new RegExp(suggestion, 'gi');
+            html = html.replace(regex, match => `<span class="highlight">${match}</span>`);
+        });
+        
+        if (element.innerHTML !== html) {
+            element.innerHTML = html;
+            
+            // İmleci önceki pozisyonuna getir
+            if (isCollapsed) {
+                const newRange = document.createRange();
+                const walker = document.createTreeWalker(
+                    element,
+                    NodeFilter.SHOW_TEXT,
+                    null,
+                    false
+                );
+                
+                let node;
+                let currentNode = null;
+                let currentOffset = 0;
+                
+                while ((node = walker.nextNode())) {
+                    const nodeLength = node.textContent.length;
+                    if (currentOffset + nodeLength >= startOffset) {
+                        currentNode = node;
+                        break;
+                    }
+                    currentOffset += nodeLength;
+                }
+                
+                if (currentNode) {
+                    const offset = Math.min(startOffset - currentOffset, currentNode.textContent.length);
+                    newRange.setStart(currentNode, offset);
+                    newRange.setEnd(currentNode, offset);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        }
+        
+        // Odağı koru
+        element.focus();
+    }
+
+    /* Paylaş Butonu Stilleri */
+    .share-button-container {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+
+    .btn-share {
+        background: linear-gradient(135deg, #2d5a27 0%, #3d7a37 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-share:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        color: white;
+    }
+
+    /* Paylaşım Modal Stilleri */
+    .share-stats-container {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 2rem;
+    }
+
+    .share-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .share-header h2 {
+        color: #2d5a27;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .share-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .share-progress {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .share-progress-title {
+        font-size: 1.2rem;
+        color: #2d5a27;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .share-progress-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d5a27;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .share-progress-bar {
+        height: 12px;
+        background-color: #e9ecef;
+    }
+
+    .share-regions {
+        margin-bottom: 2rem;
+    }
+
+    .share-region-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .share-region-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .region-name {
+        font-weight: 600;
+        color: #2d5a27;
+        margin-bottom: 0.5rem;
+    }
+
+    .region-progress {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .region-progress div {
+        height: 100%;
+        background: #2d5a27;
+        transition: width 0.5s ease;
+    }
+
+    .share-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-social {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .btn-whatsapp {
+        background: #25D366;
+    }
+
+    .btn-instagram {
+        background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+    }
+
+    .btn-download {
+        background: #2d5a27;
+    }
+
+    .btn-social:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .share-map {
+        background: white;
+        border-radius: 15px;
+        padding: 1rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        width: 100%;
+        height: 500px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .share-map object {
+        width: 100%;
+        height: 100%;
+        transform: scale(1.2);
+        transform-origin: center center;
+    }
+
+    .modal-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-right: 3rem;
+    }
+
+    .btn-note {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        color: white;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-note:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-note i {
+        font-size: 1.2rem;
+    }
+
+    .note-form textarea {
+        resize: none;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .note-form textarea:focus {
+        border-color: #2d5a27;
+        box-shadow: 0 0 0 2px rgba(45, 90, 39, 0.1);
+    }
+</style>
+
+<script>
+    // Şehir verileri
+    const cityData = {
+        // MARMARA BÖLGESİ
+        'İstanbul': {
+            districts: ['Kadıköy', 'Beşiktaş', 'Üsküdar', 'Fatih', 'Beyoğlu', 'Şişli', 'Bakırköy', 'Sarıyer', 'Maltepe', 'Ataşehir', 'Pendik', 'Kartal'],
+            dishes: ['İskender Kebap', 'Balık Ekmek', 'Kumpir', 'Midye Dolma', 'Islak Hamburger', 'Börek', 'Simit', 'Kokoreç', 'Tavacı Recep Usta', 'Sultanahmet Köftesi'],
+            places: ['Ayasofya', 'Topkapı Sarayı', 'Kapalı Çarşı', 'Sultanahmet Camii', 'Galata Kulesi', 'Kız Kulesi', 'Dolmabahçe Sarayı', 'Yerebatan Sarnıcı', 'Boğaz Turu', 'Princes Adaları']
+        },
+        'Bursa': {
+            districts: ['Osmangazi', 'Nilüfer', 'Yıldırım', 'Gemlik', 'Mudanya', 'İnegöl', 'Kestel', 'Gürsu', 'Karacabey', 'Orhangazi'],
+            dishes: ['İskender Kebap', 'Cantık', 'Kemalpaşa Tatlısı', 'İnegöl Köfte', 'Kestane Şekeri', 'Pideli Köfte', 'Tahinli Pide', 'Mihaliç Peyniri', 'Bursa Şeftalisi'],
+            places: ['Ulu Cami', 'Yeşil Türbe', 'Tophane Saat Kulesi', 'Uludağ', 'Cumalıkızık', 'Irgandı Köprüsü', 'Bursa Kalesi', 'Koza Han', 'Oylat Kaplıcaları']
+        },
+        'Balıkesir': {
+            districts: ['Altıeylül', 'Karesi', 'Bandırma', 'Edremit', 'Gönen', 'Ayvalık', 'Burhaniye', 'Bigadiç', 'Susurluk', 'Erdek', 'Havran'],
+            dishes: ['Höşmerim', 'Peynirli Pide', 'Balık Yumurtası', 'Saçaklı Mantı', 'Tirit', 'Susurluk Tostu', 'Ayvalık Tostu', 'Keşkek', 'Balıkesir Kaymaklısı', 'Zeytin'],
+            places: ['Kuş Cenneti', 'Cunda Adası', 'Şeytan Sofrası', 'Suçıktı Şelalesi', 'Ayvalık Adaları', 'Taksiyarhis Kilisesi', 'Zağnos Paşa Camii', 'Saat Kulesi', 'Erdek Plajları']
+        },
+        'Çanakkale': {
+            districts: ['Merkez', 'Biga', 'Çan', 'Gelibolu', 'Ayvacık', 'Bayramiç', 'Ezine', 'Yenice', 'Lapseki', 'Gökçeada'],
+            dishes: ['Peynir Helvası', 'Çanakkale Mantısı', 'Sardalya Dolması', 'Efibadem', 'Tumbi', 'Ezine Peyniri', 'Çıplak Tostu', 'İmambayıldı'],
+            places: ['Truva Antik Kenti', 'Gelibolu Yarımadası', 'Çanakkale Şehitliği', 'Asos Antik Kenti', 'Bozcaada', 'Gökçeada', 'Kilitbahir Kalesi']
+        },
+        'Edirne': {
+            districts: ['Merkez', 'Keşan', 'Uzunköprü', 'İpsala', 'Havsa', 'Meriç', 'Enez', 'Süloğlu', 'Lalapaşa'],
+            dishes: ['Edirne Ciğeri', 'Tava Ciğer', 'Badem Ezmesi', 'Deva-i Misk', 'Kavala Kurabiyesi', 'Peynir Helvası', 'Mamzana', 'Yaprak Ciğer'],
+            places: ['Selimiye Camii', 'Üç Şerefeli Cami', 'Edirne Sarayı', 'Karaağaç', 'Meriç Köprüsü', 'Sveti Stefan Kilisesi', 'Edirne Müzesi']
+        },
+        'Kırklareli': {
+            districts: ['Merkez', 'Lüleburgaz', 'Babaeski', 'Vize', 'Pınarhisar', 'Demirköy', 'Pehlivanköy', 'Kofçaz'],
+            dishes: ['Hardaliye', 'Poyralı Peyniri', 'Kırklareli Köftesi', 'Demirköy Peyniri', 'Tarhana Çorbası', 'Kara Üzüm Pekmezi', 'Kırklareli Mantısı'],
+            places: ['Dupnisa Mağarası', 'İğneada Longoz Ormanları', 'Kıyıköy', 'Vize Kalesi', 'Aşağı Pınar Höyüğü', 'Kırklareli Müzesi', 'Demirköy Fatih Dökümhanesi']
+        },
+        'Kocaeli': {
+            districts: ['İzmit', 'Gebze', 'Darıca', 'Körfez', 'Gölcük', 'Derince', 'Kandıra', 'Karamürsel', 'Başiskele', 'Kartepe'],
+            dishes: ['Pişmaniye', 'İzmit Simidi', 'Kandıra Yoğurdu', 'Hereke Kaymaklısı', 'Kaşar Helvası', 'Dartılı Keşkek'],
+            places: ['Kartepe Kayak Merkezi', 'Seka Park', 'Pembe Köşk', 'Maşukiye', 'Yürüyüş Yolu', 'Ormanya', 'Gölcük Sahili']
+        },
+        'Sakarya': {
+            districts: ['Adapazarı', 'Serdivan', 'Arifiye', 'Erenler', 'Hendek', 'Karasu', 'Akyazı', 'Ferizli', 'Sapanca', 'Geyve'],
+            dishes: ['Islama Köfte', 'Dartılı Keşkek', 'Uhut Tatlısı', 'Kabak Millesi', 'Adapazarı Islama Köftesi', 'Çiğ Börek'],
+            places: ['Sapanca Gölü', 'Karasu Plajı', 'Acarlar Longozu', 'Poyrazlar Gölü', 'Taraklı Evleri', 'Justinianus Köprüsü']
+        },
+        'Tekirdağ': {
+            districts: ['Süleymanpaşa', 'Çorlu', 'Çerkezköy', 'Kapaklı', 'Ergene', 'Malkara', 'Şarköy', 'Hayrabolu', 'Saray', 'Marmaraereğlisi', 'Muratlı'],
+            dishes: ['Tekirdağ Köftesi', 'Peynir Helvası', 'Hayrabolu Tatlısı', 'Tekirdağ Rakısı', 'Bağ Yaprağı Sarması', 'Tekirdağ Kirazı', 'Papaz Eriği', 'Tekirdağ Böreği', 'Zerde', 'Kuru Köfte'],
+            places: ['Rakoczi Müzesi', 'Namık Kemal Evi', 'Tekirdağ Sahili', 'Uçmakdere', 'Hora Feneri', 'Şarköy Plajları', 'Marmara Ereğlisi Plajı', 'Rüstem Paşa Camii', 'Tekirdağ Arkeoloji Müzesi', 'Barış ve Özgürlük Parkı']
+        },
+        'Yalova': {
+            districts: ['Merkez', 'Çiftlikköy', 'Çınarcık', 'Altınova', 'Armutlu', 'Termal'],
+            dishes: ['Yalova Köftesi', 'Sütlü Nuriye', 'Keşkek', 'Mantı', 'Termal Böreği', 'Yalova Simit'],
+            places: ['Yürüyen Köşk', 'Termal Kaplıcaları', 'Karaca Arboretum', 'Sudüşen Şelalesi', 'Çınarcık Plajı', 'Delmece Yaylası']
+        },
+        // EGE BÖLGESİ
+        'İzmir': {
+            districts: ['Konak', 'Karşıyaka', 'Bornova', 'Buca', 'Çiğli', 'Balçova', 'Gaziemir', 'Karabağlar', 'Bayraklı', 'Menderes', 'Urla', 'Çeşme', 'Foça', 'Seferihisar', 'Bergama', 'Aliağa'],
+            dishes: ['Boyoz', 'Kumru', 'İzmir Köfte', 'Şambali', 'Lokma', 'Gevrek', 'Kokoreç', 'Çipura', 'Midye Dolma', 'İzmir Bombası', 'Sübye', 'Kemalpaşa Tatlısı', 'İzmir Tulumu', 'Foça Böreği'],
+            places: ['Saat Kulesi', 'Kemeraltı Çarşısı', 'Kordon', 'Asansör', 'Agora', 'Kızlarağası Hanı', 'Efes Antik Kenti', 'Şirince', 'Alaçatı', 'Çeşme Plajları', 'Foça', 'Bergama Akropolü', 'Kadifekale', 'İzmir Doğal Yaşam Parkı']
+        },
+        'Aydın': {
+            districts: ['Efeler', 'Nazilli', 'Söke', 'Kuşadası', 'Didim', 'İncirliova', 'Germencik', 'Çine', 'Köşk', 'Kuyucak', 'Koçarlı', 'Bozdoğan', 'Buharkent', 'Karacasu', 'Sultanhisar', 'Yenipazar'],
+            dishes: ['Pide', 'Keşkek', 'Çöp Şiş', 'Aydın İnciri', 'Yuvarlama', 'Patlıcan Böreği', 'Aydın Kebabı', 'Patlıcan Güveci', 'Kestane Şekeri', 'Aydın Pidesi', 'Çiğdem Pilavı', 'Aydın Köftesi'],
+            places: ['Kuşadası', 'Didim', 'Milet Antik Kenti', 'Afrodisias', 'Dilek Yarımadası', 'Zeus Mağarası', 'Priene Antik Kenti', 'Bafa Gölü', 'Altınkum Plajı', 'Nysa Antik Kenti', 'Alinda Antik Kenti', 'Magnesia Antik Kenti']
+        },
+        'Denizli': {
+            districts: ['Pamukkale', 'Merkezefendi', 'Çivril', 'Acıpayam', 'Tavas', 'Honaz', 'Sarayköy', 'Buldan', 'Çal', 'Bekilli'],
+            dishes: ['Denizli Kebabı', 'Kuru Börülce', 'Keşkek', 'Tarhana Çorbası', 'Höşmerim', 'Yaprak Sarması'],
+            places: ['Pamukkale Travertenleri', 'Hierapolis Antik Kenti', 'Laodikya Antik Kenti', 'Kaklık Mağarası', 'Buldan Evleri']
+        },
+        'Muğla': {
+            districts: ['Menteşe', 'Bodrum', 'Fethiye', 'Marmaris', 'Milas', 'Datça', 'Köyceğiz', 'Ortaca', 'Dalaman', 'Ula', 'Yatağan', 'Kavaklıdere', 'Seydikemer'],
+            dishes: ['Börek', 'Çökertme Kebabı', 'Keşkek', 'Muğla Saraylısı', 'Bodrum Mantısı', 'Çıtırma', 'Deniz Mahsulleri', 'Datça Badem Tatlısı', 'Muğla Köftesi', 'Çökertme', 'Muğla Tarhanası', 'Börülce'],
+            places: ['Bodrum Kalesi', 'Ölüdeniz', 'Kelebekler Vadisi', 'Dalyan', 'Kleopatra Plajı', 'Saklıkent Kanyonu', 'Akyaka', 'İztuzu Plajı', 'Mavi Mağara', 'Kayaköy', 'Knidos Antik Kenti', 'Stratonikeia Antik Kenti']
+        },
+        'Manisa': {
+            districts: ['Şehzadeler', 'Yunusemre', 'Akhisar', 'Turgutlu', 'Salihli', 'Soma', 'Alaşehir', 'Saruhanlı', 'Kula', 'Demirci'],
+            dishes: ['Manisa Kebabı', 'Mesir Macunu', 'Sinkonta', 'Manisa Böreği', 'Akhisar Köftesi', 'Kula Güveç'],
+            places: ['Spil Dağı Milli Parkı', 'Sardes Antik Kenti', 'Aigai Antik Kenti', 'Kula Peribacaları', 'Manisa Kalesi']
+        },
+        'Afyonkarahisar': {
+            districts: ['Merkez', 'Sandıklı', 'Dinar', 'Bolvadin', 'Emirdağ', 'Şuhut', 'Çay', 'Sinanpaşa', 'İhsaniye', 'Sultandağı'],
+            dishes: ['Afyon Kaymağı', 'Sucuk', 'Patatesli Ekmek', 'Bükme', 'Keşkek', 'Haşhaşlı Börek'],
+            places: ['Afyon Kalesi', 'Frig Vadisi', 'Sandıklı Kaplıcaları', 'Gazlıgöl Kaplıcaları', 'Başkomutan Tarihi Milli Parkı']
+        },
+        'Kütahya': {
+            districts: ['Merkez', 'Tavşanlı', 'Simav', 'Gediz', 'Emet', 'Altıntaş', 'Domaniç', 'Hisarcık', 'Aslanapa', 'Çavdarhisar'],
+            dishes: ['Kütahya Çorbası', 'Cimcik', 'İçli Pilav', 'Göce Tarhanası', 'Kütahya Böreği'],
+            places: ['Aizanoi Antik Kenti', 'Kütahya Kalesi', 'Frig Vadisi', 'Çinili Cami', 'Domaniç Ormanları']
+        },
+        'Uşak': {
+            districts: ['Merkez', 'Banaz', 'Eşme', 'Sivaslı', 'Karahallı', 'Ulubey'],
+            dishes: ['Uşak Tarhanası', 'Keşkek', 'Devedişi', 'Uşak Böreği', 'Cendere', 'Alaca Çorba', 'Uşak Helvası'],
+            places: ['Blaundus Antik Kenti', 'Uşak Arkeoloji Müzesi', 'Ulubey Kanyonu', 'Taşyaran Vadisi', 'Clandras Köprüsü', 'Karun Hazineleri', 'Pepuza Antik Kenti', 'Mesotimolos Antik Kenti', 'Cılandıras Köprüsü']
+        },
+        // AKDENİZ BÖLGESİ
+        'Antalya': {
+            districts: ['Muratpaşa', 'Konyaaltı', 'Kepez', 'Alanya', 'Manavgat', 'Serik', 'Kaş', 'Kemer', 'Kumluca', 'Finike', 'Demre', 'Gazipaşa'],
+            dishes: ['Piyaz', 'Şiş Köfte', 'Serpme Börek', 'Hibeş', 'Tahinli Piyaz', 'Toros Salatası', 'Tandır Kebabı', 'Bergamot Reçeli', 'Turunç Reçeli'],
+            places: ['Kaleiçi', 'Düden Şelalesi', 'Konyaaltı Plajı', 'Hadrian Kapısı', 'Aspendos', 'Side Antik Kenti', 'Olimpos', 'Termessos', 'Karain Mağarası']
+        },
+        'Adana': {
+            districts: ['Seyhan', 'Yüreğir', 'Çukurova', 'Sarıçam', 'Ceyhan', 'Kozan', 'İmamoğlu', 'Karataş', 'Pozantı', 'Karaisalı'],
+            dishes: ['Adana Kebap', 'Şırdan', 'Kırkkat', 'Analı Kızlı', 'Bici Bici', 'Ciğer Kebabı', 'Yüksük Çorbası', 'Karakuş Tatlısı'],
+            places: ['Sabancı Merkez Camii', 'Taşköprü', 'Saat Kulesi', 'Varda Köprüsü', 'Kapıkaya Kanyonu', 'Yılankale', 'Misis Antik Kenti']
+        },
+        'Mersin': {
+            districts: ['Akdeniz', 'Mezitli', 'Yenişehir', 'Toroslar', 'Tarsus', 'Erdemli', 'Silifke', 'Anamur', 'Mut', 'Gülnar'],
+            dishes: ['Tantuni', 'Cezerye', 'Kerebiç', 'Batırık', 'Karsambaç', 'Künefe', 'Sıkma', 'Keklik Böreği', 'Tarsus Humusu'],
+            places: ['Kızkalesi', 'Cennet Cehennem Mağaraları', 'Tarsus Antik Kenti', 'Anamur Kalesi', 'Mamure Kalesi', 'Narlıkuyu', 'Uzuncaburç']
+        },
+        'Hatay': {
+            districts: ['Antakya', 'İskenderun', 'Defne', 'Samandağ', 'Kırıkhan', 'Reyhanlı', 'Dörtyol', 'Erzin', 'Belen', 'Altınözü'],
+            dishes: ['Künefe', 'Humus', 'Oruk', 'Tepsi Kebabı', 'Zahter Salatası', 'Kağıt Kebabı', 'Muhammara', 'Biberli Ekmek', 'Katıklı Ekmek'],
+            places: ['Habib-i Neccar Camii', 'Titus Tüneli', 'St. Pierre Kilisesi', 'Hatay Arkeoloji Müzesi', 'Sokullu Külliyesi', 'Harbiye Şelalesi']
+        },
+        'Osmaniye': {
+            districts: ['Merkez', 'Kadirli', 'Düziçi', 'Bahçe', 'Toprakkale', 'Hasanbeyli', 'Sumbas'],
+            dishes: ['Tırşik', 'Yüksük Çorbası', 'Kömbe', 'Mahluta Çorbası', 'Topalak Köftesi', 'Sıkma'],
+            places: ['Karatepe-Aslantaş Milli Parkı', 'Kastabala Antik Kenti', 'Toprakkale', 'Zorkun Yaylası', 'Düziçi Haruniye Kaplıcaları']
+        },
+        'Kahramanmaraş': {
+            districts: ['Onikişubat', 'Dulkadiroğlu', 'Elbistan', 'Afşin', 'Türkoğlu', 'Pazarcık', 'Göksun', 'Andırın', 'Çağlayancerit', 'Nurhak', 'Ekinözü'],
+            dishes: ['Maraş Dondurması', 'Maraş Tarhanası', 'Ekşili Çorba', 'Kelle Paça', 'Simit Kebabı', 'İçli Köfte', 'Yağlı Ekmek', 'Patlıcan Kebabı', 'Maraş Çöreği'],
+            places: ['Kahramanmaraş Kalesi', 'Germenicia Antik Kenti', 'Taş Medrese', 'Ulu Camii', 'Kapıçam Tabiat Parkı', 'Başkonuş Yaylası', 'Döngel Mağaraları']
+        },
+        'Burdur': {
+            districts: ['Merkez', 'Bucak', 'Gölhisar', 'Yeşilova', 'Çavdır', 'Tefenni', 'Karamanlı', 'Ağlasun', 'Altınyayla'],
+            dishes: ['Burdur Şiş', 'Ceviz Ezmesi', 'Burdur Makarnası', 'Havuç Boranası', 'Testi Kebabı', 'Fırın Kebabı'],
+            places: ['Salda Gölü', 'Sagalassos Antik Kenti', 'İnsuyu Mağarası', 'Burdur Gölü', 'Kibyra Antik Kenti']
+        },
+        'Isparta': {
+            districts: ['Merkez', 'Yalvaç', 'Eğirdir', 'Şarkikaraağaç', 'Gelendost', 'Keçiborlu', 'Senirkent', 'Uluborlu', 'Atabey'],
+            dishes: ['Kabune Pilavı', 'Banak', 'Tirit', 'Keşkek', 'Höşmerim', 'Nokul', 'Şiş Köfte'],
+            places: ['Eğirdir Gölü', 'Davraz Kayak Merkezi', 'Kovada Gölü', 'Pisidia Antik Kenti', 'Zindan Mağarası']
+        },
+        // İÇ ANADOLU BÖLGESİ
+        'Ankara': {
+            districts: ['Çankaya', 'Keçiören', 'Yenimahalle', 'Mamak', 'Etimesgut', 'Sincan', 'Altındağ', 'Pursaklar', 'Gölbaşı', 'Polatlı'],
+            dishes: ['Ankara Tava', 'İşkembe Çorbası', 'Kızılcık Tarhanası', 'Ankara Simidi', 'Beypazarı Kurusu', 'Öllüğün Çorbası', 'Uruş Dolması'],
+            places: ['Anıtkabir', 'Kocatepe Camii', 'Ankara Kalesi', 'TBMM', 'Gençlik Parkı', 'Atakule', 'Beypazarı', 'Hamamönü', 'Eymir Gölü']
+        },
+        'Konya': {
+            districts: ['Selçuklu', 'Meram', 'Karatay', 'Ereğli', 'Akşehir', 'Beyşehir', 'Çumra', 'Seydişehir', 'Ilgın', 'Kulu'],
+            dishes: ['Etli Ekmek', 'Mevlana Böreği', 'Fırın Kebabı', 'Tirit', 'Bamya Çorbası', 'Arabaşı', 'Höşmerim', 'Konya Pilavı'],
+            places: ['Mevlana Müzesi', 'Alaeddin Tepesi', 'Aziziye Camii', 'Karatay Medresesi', 'İnce Minareli Medrese', 'Beyşehir Gölü']
+        },
+        'Eskişehir': {
+            districts: ['Tepebaşı', 'Odunpazarı', 'Sivrihisar', 'Çifteler', 'Mahmudiye', 'Seyitgazi', 'Alpu', 'Beylikova', 'İnönü', 'Günyüzü', 'Mihalgazi', 'Sarıcakaya', 'Han', 'Mihallıçcık'],
+            dishes: ['Çibörek', 'Met Helvası', 'Balaban Kebap', 'Haşhaşlı Bükme', 'Göbete', 'Pazırık', 'Kalabak Suyu', 'Nuga Helvası', 'Mercimekli Mantı', 'Eskişehir Simidi'],
+            places: ['Odunpazarı Evleri', 'Porsuk Çayı', 'Sazova Parkı', 'Kurşunlu Camii', 'Yazılıkaya', 'Frig Vadisi', 'Kent Park', 'Eskişehir Bilim Deney Merkezi', 'Yılmaz Büyükerşen Balmumu Müzesi', 'Atlıhan El Sanatları Çarşısı']
+        },
+        'Kayseri': {
+            districts: ['Melikgazi', 'Kocasinan', 'Talas', 'Develi', 'Yahyalı', 'Bünyan', 'İncesu', 'Pınarbaşı', 'Tomarza'],
+            dishes: ['Mantı', 'Pastırma', 'Sucuk', 'Yağlama', 'Pöç', 'Nevzine', 'Katmer', 'Gilaburu Suyu', 'Kurşun Aşı'],
+            places: ['Erciyes Dağı', 'Kayseri Kalesi', 'Hunat Hatun Külliyesi', 'Kapuzbaşı Şelaleleri', 'Sultan Sazlığı']
+        },
+        'Sivas': {
+            districts: ['Merkez', 'Şarkışla', 'Yıldızeli', 'Suşehri', 'Zara', 'Divriği', 'Gemerek', 'Kangal', 'Gürün'],
+            dishes: ['Sivas Köftesi', 'Hingel', 'Peskütan Çorbası', 'Madımak', 'Sivas Katmeri', 'Pezük', 'Kavurma'],
+            places: ['Divriği Ulu Camii', 'Gökmedrese', 'Çifte Minareli Medrese', 'Kangal Balıklı Kaplıcası', 'Sızır Şelalesi']
+        },
+        'Kırşehir': {
+            districts: ['Merkez', 'Kaman', 'Mucur', 'Çiçekdağı', 'Akpınar', 'Boztepe', 'Akçakent'],
+            dishes: ['Çullama', 'Kesme Aşı', 'Madımak', 'Kuru Dolma', 'Kırşehir Mantısı', 'Cacık Aşı'],
+            places: ['Cacabey Medresesi', 'Ahi Evran Türbesi', 'Kalehöyük', 'Seyfe Gölü', 'Mucur Yeraltı Şehri']
+        },
+        'Nevşehir': {
+            districts: ['Merkez', 'Ürgüp', 'Avanos', 'Gülşehir', 'Derinkuyu', 'Acıgöl', 'Hacıbektaş', 'Kozaklı'],
+            dishes: ['Testi Kebabı', 'Kuru Fasulye', 'Nevşehir Tava', 'Gendime Çorbası', 'Aside', 'Dolaz'],
+            places: ['Göreme Açık Hava Müzesi', 'Derinkuyu Yeraltı Şehri', 'Üçhisar Kalesi', 'Hacı Bektaş Veli Türbesi']
+        },
+        'Aksaray': {
+            districts: ['Merkez', 'Ortaköy', 'Eskil', 'Gülağaç', 'Güzelyurt', 'Sarıyahşi', 'Ağaçören', 'Sultanhanı'],
+            dishes: ['Aksaray Tava', 'Sıkma', 'Pilav', 'Şepe', 'Topalak', 'Aside'],
+            places: ['Ihlara Vadisi', 'Hasan Dağı', 'Sultanhanı Kervansarayı', 'Güzelyurt Vadisi', 'Tuz Gölü']
+        },
+        'Niğde': {
+            districts: ['Merkez', 'Bor', 'Çamardı', 'Ulukışla', 'Altunhisar', 'Çiftlik'],
+            dishes: ['Niğde Tava', 'Köftür', 'Dolaz', 'Aside', 'Pıtpıt', 'Kuru Börülce Yemeği'],
+            places: ['Aladağlar Milli Parkı', 'Niğde Kalesi', 'Gümüşler Manastırı', 'Kemerhisar Antik Kenti']
+        },
+        'Karaman': {
+            districts: ['Merkez', 'Ermenek', 'Sarıveliler', 'Ayrancı', 'Kazımkarabekir', 'Başyayla'],
+            dishes: ['Batırık', 'Arabaşı', 'Zülbiye', 'Calla', 'Divle Obruğu Peyniri', 'Taşkale Helvası'],
+            places: ['Karaman Kalesi', 'Taşkale Tahıl Ambarları', 'Manazan Mağaraları', 'İncesu Mağarası']
+        },
+        'Kırıkkale': {
+            districts: ['Merkez', 'Yahşihan', 'Keskin', 'Delice', 'Sulakyurt', 'Bahşili', 'Balışeyh', 'Çelebi'],
+            dishes: ['Keskin Tava', 'Madımak', 'Yarma Çorbası', 'Efelek Sarması', 'Hingel'],
+            places: ['Çeşnigir Köprüsü', 'Hasandede Türbesi', 'Kaletepe', 'Delice Vadisi', 'Kapulukaya Barajı']
+        },
+        'Yozgat': {
+            districts: ['Merkez', 'Sorgun', 'Akdağmadeni', 'Yerköy', 'Şefaatli', 'Boğazlıyan', 'Sarıkaya', 'Çayıralan'],
+            dishes: ['Arabaşı', 'Testi Kebabı', 'Madımak', 'Parmak Çöreği', 'Yozgat Pide', 'Tandır Kebabı'],
+            places: ['Çapanoğlu Camii', 'Sarıkaya Roma Hamamı', 'Kazankaya Kanyonu', 'Çamlık Milli Parkı']
+        },
+        'Çankırı': {
+            districts: ['Merkez', 'Çerkeş', 'Ilgaz', 'Orta', 'Şabanözü', 'Yapraklı', 'Korgun', 'Kurşunlu'],
+            dishes: ['Yayım', 'Tutmaç', 'Kesme Hamur', 'Çankırı Sarması', 'Ilgaz Pilavı', 'Tatar Böreği'],
+            places: ['Ilgaz Dağı Milli Parkı', 'Taş Mescit', 'Çankırı Kalesi', 'Tuz Mağarası', 'Pınarbaşı Mağarası']
+        },
+        // KARADENİZ BÖLGESİ
+        'Trabzon': {
+            districts: ['Ortahisar', 'Akçaabat', 'Yomra', 'Arsin', 'Araklı', 'Of', 'Sürmene', 'Maçka', 'Vakfıkebir', 'Beşikdüzü'],
+            dishes: ['Akçaabat Köftesi', 'Kuymak', 'Hamsi Tava', 'Karalahana Çorbası', 'Trabzon Pidesi', 'Sürmene Pidesi', 'Laz Böreği'],
+            places: ['Sümela Manastırı', 'Ayasofya Camii', 'Uzungöl', 'Atatürk Köşkü', 'Çal Mağarası', 'Sera Gölü', 'Zigana']
+        },
+        'Samsun': {
+            districts: ['İlkadım', 'Atakum', 'Canik', 'Tekkeköy', 'Bafra', 'Çarşamba', 'Vezirköprü', 'Terme', 'Havza', 'Ladik'],
+            dishes: ['Bafra Pidesi', 'Kaz Tiridi', 'Nokul', 'Terme Pidesi', 'Samsun Simidi', 'Kuru Fasulye', 'Keşkek'],
+            places: ['Bandırma Vapuru', 'Amisos Tepesi', 'Onur Anıtı', 'Amazon Köyü', 'Şahinkaya Kanyonu', 'Havza Kaplıcaları']
+        },
+        'Ordu': {
+            districts: ['Altınordu', 'Ünye', 'Fatsa', 'Perşembe', 'Kumru', 'Korgan', 'Gölköy', 'Mesudiye', 'Akkuş'],
+            dishes: ['Ordu Pidesi', 'Pancar Çorbası', 'Mısır Ekmeği', 'Hamsi Buğulama', 'Keşkek', 'Taflan Kavurması'],
+            places: ['Boztepe', 'Yason Burnu', 'Kurul Kalesi', 'Perşembe Yaylası', 'Çambaşı Yaylası', 'Gaga Gölü']
+        },
+        'Giresun': {
+            districts: ['Merkez', 'Bulancak', 'Espiye', 'Görele', 'Tirebolu', 'Keşap', 'Şebinkarahisar', 'Dereli', 'Yağlıdere'],
+            dishes: ['Karalahana Çorbası', 'Kiraz Kavurması', 'Hamsi Pilav', 'Giresun Pidesi', 'Mısır Ekmeği', 'Pide'],
+            places: ['Giresun Kalesi', 'Giresun Adası', 'Kümbet Yaylası', 'Kulakkaya Yaylası', 'Şebinkarahisar Kalesi']
+        },
+        'Rize': {
+            districts: ['Merkez', 'Çayeli', 'Pazar', 'Ardeşen', 'Fındıklı', 'İkizdere', 'Kalkandere', 'Güneysu', 'Derepazarı'],
+            dishes: ['Muhlama', 'Rize Kavurması', 'Hamsi Tava', 'Laz Böreği', 'Pepeçura', 'Hamsili Pilav'],
+            places: ['Ayder Yaylası', 'Zil Kale', 'Pokut Yaylası', 'Kaçkar Dağları', 'Fırtına Vadisi', 'Palovit Şelalesi']
+        },
+        'Artvin': {
+            districts: ['Merkez', 'Hopa', 'Borçka', 'Arhavi', 'Yusufeli', 'Şavşat', 'Ardanuç', 'Murgul'],
+            dishes: ['Puçuko', 'Hamsili Ekmek', 'Kuymak', 'Laz Böreği', 'Havuç Tarator', 'Artvin Ketesi'],
+            places: ['Karagöl', 'Borçka Karagöl', 'Şavşat Karagöl', 'Hatila Vadisi', 'Çoruh Nehri', 'Artvin Kalesi']
+        },
+        'Gümüşhane': {
+            districts: ['Merkez', 'Kelkit', 'Şiran', 'Kürtün', 'Torul', 'Köse'],
+            dishes: ['Gümüşhane Kömesi', 'Siron', 'Kuşburnu Çayı', 'Pestil', 'Köme', 'Lemis', 'Gümüşhane Ekmeği', 'Fasulye Çorbası'],
+            places: ['Karaca Mağarası', 'Tomara Şelalesi', 'Limni Gölü', 'Santa Harabeleri', 'Zigana Geçidi', 'Süleymaniye Camii', 'Artabel Gölleri']
+        },
+        'Tokat': {
+            districts: ['Merkez', 'Erbaa', 'Turhal', 'Niksar', 'Zile', 'Reşadiye', 'Almus', 'Pazar', 'Yeşilyurt'],
+            dishes: ['Tokat Kebabı', 'Bat', 'Keşkek', 'Madımak', 'Tokat Yaprağı', 'Zile Pekmezi', 'Tokat Pidesi'],
+            places: ['Ballıca Mağarası', 'Tokat Kalesi', 'Niksar Kalesi', 'Sebastopolis Antik Kenti', 'Komana Antik Kenti']
+        },
+        'Amasya': {
+            districts: ['Merkez', 'Merzifon', 'Suluova', 'Taşova', 'Göynücek', 'Hamamözü', 'Gümüşhacıköy'],
+            dishes: ['Amasya Çöreği', 'Keşkek', 'Bakla Dolması', 'Toyga Çorbası', 'Amasya Çorbası', 'Katmer'],
+            places: ['Kral Kaya Mezarları', 'Amasya Kalesi', 'Ferhat Su Kanalı', 'Yalıboyu Evleri', 'Borabay Gölü']
+        },
+        'Sinop': {
+            districts: ['Merkez', 'Boyabat', 'Gerze', 'Durağan', 'Ayancık', 'Türkeli', 'Erfelek', 'Saraydüzü', 'Dikmen'],
+            dishes: ['Nokul', 'Mancarlı Pide', 'İçli Tava', 'Katlama', 'Kulak Mantısı', 'Keşkek'],
+            places: ['Sinop Kalesi', 'Hamsilos Koyu', 'Erfelek Şelaleleri', 'İnceburun', 'Sinop Cezaevi']
+        },
+        'Kastamonu': {
+            districts: ['Merkez', 'Tosya', 'Taşköprü', 'İnebolu', 'Cide', 'Araç', 'Bozkurt', 'Daday', 'Devrekani'],
+            dishes: ['Etli Ekmek', 'Pastırma', 'Kuyu Kebabı', 'Banduma', 'Tirit', 'Ecevit Çorbası'],
+            places: ['Ilgaz Dağı', 'Kastamonu Kalesi', 'Valla Kanyonu', 'İnebolu', 'Pompeipolis Antik Kenti']
+        },
+        'Çorum': {
+            districts: ['Merkez', 'Sungurlu', 'Osmancık', 'İskilip', 'Alaca', 'Bayat', 'Kargı', 'Mecitözü', 'Ortaköy'],
+            dishes: ['Çorum Leblebisi', 'İskilip Dolması', 'Kara Çuval Helvası', 'Hedik', 'Madımak', 'Keşkek'],
+            places: ['Hattuşaş Antik Kenti', 'Alacahöyük', 'İskilip Kalesi', 'Osmancık Kalesi', 'İncesu Kanyonu']
+        },
+        'Bartın': {
+            districts: ['Merkez', 'Amasra', 'Kurucaşile', 'Ulus'],
+            dishes: ['Pirinçli Mantı', 'Kabak Burması', 'Hamsi Tava', 'Bartın Pidesi', 'Tirit'],
+            places: ['Amasra', 'Güzelcehisar Plajı', 'İnkumu', 'Ulukaya Şelalesi', 'Bartın Çayı']
+        },
+        'Karabük': {
+            districts: ['Merkez', 'Safranbolu', 'Yenice', 'Eskipazar', 'Eflani', 'Ovacık'],
+            dishes: ['Etli Ekmek', 'Kuyu Kebabı', 'Safranbolu Lokumu', 'Peruhi', 'Karabük Pidesi'],
+            places: ['Safranbolu Evleri', 'Yenice Ormanları', 'Bulak Mağarası', 'Hadrianoupolis Antik Kenti']
+        },
+        'Zonguldak': {
+            districts: ['Merkez', 'Ereğli', 'Çaycuma', 'Devrek', 'Kozlu', 'Kilimli', 'Gökçebey', 'Alaplı'],
+            dishes: ['Zonguldak Pidesi', 'Devrek Simidi', 'Hamsi Buğulama', 'Kömeç', 'Mancar Dolması', 'Melengücceği Tatlısı', 'Karadeniz Pidesi', 'Çakallı Menemeni', 'Kaşık Sapı Mantısı', 'Zonguldak Mantısı'],
+            places: ['Cehennemağzı Mağaraları', 'Gökgöl Mağarası', 'Ereğli Plajları', 'Devrek', 'Filyos Antik Kenti', 'Kozlu Sahili', 'Maden Müzesi', 'Karadeniz Ereğli Müzesi', 'Uzunkum Plajı', 'Kapuz Plajı']
+        },
+        'Hakkari': {
+            districts: ['Merkez', 'Yüksekova', 'Şemdinli', 'Çukurca', 'Derecik'],
+            dishes: ['Keledoş', 'Doğaba', 'Karis', 'Şiwan', 'Hakkari Ketesi', 'Cacık'],
+            places: ['Cilo Dağı', 'Sat Gölleri', 'Zap Vadisi', 'Meydan Medresesi', 'Kayme Sarayı', 'Merga Bütan Yaylası']
+        },
+        'Bolu': {
+            districts: ['Merkez', 'Gerede', 'Mengen', 'Mudurnu', 'Göynük', 'Yeniçağa', 'Dörtdivan', 'Seben'],
+            dishes: ['Kızılcık Tarhanası', 'Mengen Pilavı', 'Patatesli Köfte', 'Keş', 'Bakla Çorbası', 'Umaç Çorbası'],
+            places: ['Abant Gölü', 'Yedigöller', 'Gölcük Gölü', 'Kartalkaya Kayak Merkezi', 'Mudurnu Evleri']
+        },
+        'Düzce': {
+            districts: ['Merkez', 'Akçakoca', 'Kaynaşlı', 'Yığılca', 'Gölyaka', 'Çilimli', 'Gümüşova', 'Cumayeri'],
+            dishes: ['Düzce Köftesi', 'Acıka', 'Kuru Fasulye', 'Melengücceği Tatlısı', 'Mantar Yemeği'],
+            places: ['Akçakoca Plajları', 'Efteni Gölü', 'Güzeldere Şelalesi', 'Samandere Şelalesi', 'Topuk Yaylası']
+        },
+        // DOĞU ANADOLU BÖLGESİ
+        'Erzurum': {
+            districts: ['Yakutiye', 'Palandöken', 'Aziziye', 'Horasan', 'İspir', 'Oltu', 'Tortum', 'Aşkale', 'Narman', 'Pasinler'],
+            dishes: ['Cağ Kebabı', 'Kadayıf Dolması', 'Civil Peyniri', 'Ayran Aşı Çorbası', 'Su Böreği', 'Çaşır Pancarı'],
+            places: ['Çifte Minareli Medrese', 'Atatürk Evi', 'Tortum Şelalesi', 'Palandöken Kayak Merkezi', 'Narman Peribacaları']
+        },
+        'Van': {
+            districts: ['İpekyolu', 'Tuşba', 'Edremit', 'Erciş', 'Çaldıran', 'Özalp', 'Başkale', 'Muradiye', 'Gürpınar'],
+            dishes: ['Van Kahvaltısı', 'Kavurmalı Pilav', 'Keledoş', 'Murtuğa', 'Van Otlu Peyniri', 'Ayran Aşı'],
+            places: ['Van Kalesi', 'Akdamar Adası', 'Van Gölü', 'Muradiye Şelalesi', 'Hoşap Kalesi', 'İnci Kefali']
+        },
+        'Kars': {
+            districts: ['Merkez', 'Sarıkamış', 'Kağızman', 'Digor', 'Selim', 'Arpaçay', 'Akyaka', 'Susuz'],
+            dishes: ['Kars Kaşarı', 'Hangel', 'Piti', 'Kaz', 'Umaç Helvası', 'Kesme Aşı', 'Kars Böreği'],
+            places: ['Ani Harabeleri', 'Kars Kalesi', 'Sarıkamış Kayak Merkezi', 'Çıldır Gölü', 'Kağızman Taş Köprü']
+        },
+        'Ağrı': {
+            districts: ['Merkez', 'Patnos', 'Doğubayazıt', 'Diyadin', 'Eleşkirt', 'Tutak', 'Taşlıçay', 'Hamur'],
+            dishes: ['Abdigör Köftesi', 'Çılbır', 'Kete', 'Hörre Çorbası', 'Kavut', 'Halise'],
+            places: ['Ağrı Dağı', 'İshak Paşa Sarayı', 'Meteor Çukuru', 'Diyadin Kaplıcaları', 'Balık Gölü']
+        },
+        'Malatya': {
+            districts: ['Yeşilyurt', 'Battalgazi', 'Doğanşehir', 'Akçadağ', 'Darende', 'Pütürge', 'Yazıhan', 'Hekimhan'],
+            dishes: ['Kağıt Kebabı', 'Analı Kızlı', 'İçli Köfte', 'Malatya Kayısısı', 'Yağlı Köfte', 'Pirpirim Aşı'],
+            places: ['Aslantepe Höyüğü', 'Nemrut Dağı', 'Levent Vadisi', 'Günpınar Şelalesi', 'Somuncu Baba Külliyesi']
+        },
+        'Elazığ': {
+            districts: ['Merkez', 'Kovancılar', 'Karakoçan', 'Palu', 'Baskil', 'Arıcak', 'Maden', 'Sivrice'],
+            dishes: ['Harput Köftesi', 'İçli Köfte', 'Kömbe', 'Lobik Çorbası', 'Gömme', 'Işkın Yemeği', 'Kelecoş', 'Gaygana'],
+            places: ['Harput Kalesi', 'Hazar Gölü', 'Keban Barajı', 'Buzluk Mağarası', 'Harput Ulu Camii', 'Golan Kaplıcaları']
+        },
+        'Ardahan': {
+            districts: ['Merkez', 'Göle', 'Çıldır', 'Hanak', 'Posof', 'Damal'],
+            dishes: ['Ardahan Kazı', 'Hörre', 'Kesme Aşı', 'Umaç Helvası', 'Kuymak', 'Feselli'],
+            places: ['Çıldır Gölü', 'Şeytan Kalesi', 'Damal Bebekleri', 'Akçakale Adası', 'Posof Yaylaları']
+        },
+        'Iğdır': {
+            districts: ['Merkez', 'Tuzluca', 'Aralık', 'Karakoyunlu'],
+            dishes: ['Bozbaş', 'Piti', 'Taş Köfte', 'Kavurmalı Pilav', 'Kete', 'Halise', 'Umaç Helvası', 'Göğermiş'],
+            places: ['Ağrı Dağı', 'Tuzluca Tuz Mağaraları', 'Meteor Çukuru', 'Korhan Kalesi', 'Sürmeli Çukuru', 'Ejder Kervansarayı']
+        },
+        'Bingöl': {
+            districts: ['Merkez', 'Genç', 'Solhan', 'Karlıova', 'Kiğı', 'Adaklı', 'Yayladere', 'Yedisu'],
+            dishes: ['Mastuva', 'Keldoş', 'Çorti', 'Kenger', 'Bingöl Çorbası', 'Helise'],
+            places: ['Yüzen Ada', 'Hesarek Kayak Merkezi', 'Kös Kaplıcaları', 'Çır Şelalesi']
+        },
+        'Bitlis': {
+            districts: ['Merkez', 'Tatvan', 'Ahlat', 'Güroymak', 'Mutki', 'Hizan', 'Adilcevaz'],
+            dishes: ['Büryan Kebabı', 'Bitlis Köftesi', 'Kitel', 'İçli Köfte', 'Helise', 'Kavut'],
+            places: ['Nemrut Krater Gölü', 'Ahlat Selçuklu Mezarlığı', 'El Aman Hanı', 'Van Gölü Sahili']
+        },
+        'Muş': {
+            districts: ['Merkez', 'Malazgirt', 'Bulanık', 'Varto', 'Hasköy', 'Korkut'],
+            dishes: ['Keledoş', 'İsot Köftesi', 'Çorti', 'Kavurmalı Pilav', 'Muş Köftesi'],
+            places: ['Malazgirt Ovası', 'Muş Ovası', 'Hamurpet Gölleri', 'Mercimekkale']
+        },
+        'Tunceli': {
+            districts: ['Merkez', 'Pertek', 'Çemişgezek', 'Hozat', 'Ovacık', 'Pülümür', 'Nazımiye', 'Mazgirt'],
+            dishes: ['Gülük Çorbası', 'Keşkek', 'Hingel', 'Kavurmalı Pilav', 'Tunceli Sarması'],
+            places: ['Munzur Vadisi', 'Peri Suyu Kanyonu', 'Halvori Gözeleri', 'Pertek Kalesi']
+        },
+        'Erzincan': {
+            districts: ['Merkez', 'Tercan', 'Üzümlü', 'Refahiye', 'Kemaliye', 'İliç', 'Kemah', 'Çayırlı'],
+            dishes: ['Kesme Çorbası', 'Çiğ Köfte', 'Gasefe', 'Şeker Pancarı', 'Ekşili Köfte'],
+            places: ['Girlevik Şelalesi', 'Kemaliye Karanlık Kanyon', 'Ergan Dağı', 'Kemah Kalesi']
+        },
+        // GÜNEYDOĞU ANADOLU BÖLGESİ
+        'Gaziantep': {
+            districts: ['Şahinbey', 'Şehitkamil', 'Oğuzeli', 'Nizip', 'Islahiye', 'Nurdağı', 'Araban', 'Karkamış'],
+            dishes: ['Baklava', 'Ali Nazik', 'Beyran', 'Yuvalama', 'Lahmacun', 'Katmer', 'Şiveydiz', 'Kuru Patlıcan Dolması'],
+            places: ['Gaziantep Kalesi', 'Zeugma Mozaik Müzesi', 'Bakırcılar Çarşısı', 'Yesemek Açık Hava Müzesi', 'Rumkale']
+        },
+        'Şanlıurfa': {
+            districts: ['Eyyübiye', 'Haliliye', 'Karaköprü', 'Siverek', 'Viranşehir', 'Birecik', 'Suruç', 'Akçakale', 'Harran', 'Bozova', 'Ceylanpınar'],
+            dishes: ['Çiğ Köfte', 'Lahmacun', 'Patlıcan Kebabı', 'Urfa Kebabı', 'Lebeni', 'Borani', 'İsot', 'Şıllık Tatlısı', 'Küncülü Kahke'],
+            places: ['Balıklıgöl', 'Göbeklitepe', 'Harran Evleri', 'Hz. İbrahim Mağarası', 'Halfeti', 'Şuayb Antik Kenti', 'Urfa Kalesi', 'Birecik Kelaynak Üretme İstasyonu']
+        },
+        'Diyarbakır': {
+            districts: ['Bağlar', 'Kayapınar', 'Sur', 'Yenişehir', 'Ergani', 'Bismil', 'Silvan', 'Çınar', 'Çermik', 'Dicle', 'Eğil', 'Hani'],
+            dishes: ['Kaburga Dolması', 'Meftune', 'Ciğer Kebabı', 'İçli Köfte', 'Karpuz', 'Lebeni', 'Çömlek Kebabı', 'Mehir Çorbası', 'Duvaklı Pilav'],
+            places: ['Diyarbakır Surları', 'Hevsel Bahçeleri', 'Ulu Cami', 'On Gözlü Köprü', 'Malabadi Köprüsü', 'Çayönü', 'Eğil Kalesi', 'Zerzevan Kalesi']
+        },
+        'Mardin': {
+            districts: ['Artuklu', 'Kızıltepe', 'Nusaybin', 'Midyat', 'Derik', 'Mazıdağı', 'Savur', 'Ömerli'],
+            dishes: ['İkbebet', 'Sembusek', 'Kaburga Dolması', 'Kibe', 'Harire', 'İrok', 'Mardin Ketesi'],
+            places: ['Mardin Kalesi', 'Deyrulzafaran Manastırı', 'Kasımiye Medresesi', 'Zinciriye Medresesi']
+        },
+        'Batman': {
+            districts: ['Merkez', 'Kozluk', 'Sason', 'Beşiri', 'Gercüş', 'Hasankeyf'],
+            dishes: ['Şam Böreği', 'Dolma', 'İçli Köfte', 'Keşkek', 'Mumbar Dolması', 'Kenger'],
+            places: ['Hasankeyf', 'Batman Çayı', 'Malabadi Köprüsü', 'Zeynel Bey Türbesi']
+        },
+        'Siirt': {
+            districts: ['Merkez', 'Kurtalan', 'Pervari', 'Baykan', 'Şirvan', 'Eruh', 'Tillo'],
+            dishes: ['Büryan Kebabı', 'Perde Pilavı', 'Siirt Kitel', 'Bumbar', 'Şiror', 'Keşkek'],
+            places: ['Tillo (Aydınlar)', 'Veysel Karani Türbesi', 'İsmail Fakirullah Türbesi']
+        },
+        'Şırnak': {
+            districts: ['Merkez', 'Cizre', 'Silopi', 'İdil', 'Uludere', 'Beytüşşebap', 'Güçlükonak'],
+            dishes: ['Şırnak Kebabı', 'Kutlık', 'Keşkek', 'Şiror', 'Hekeheşk', 'Serbıdev', 'Perde Pilavı', 'Mumbar Dolması'],
+            places: ['Cudi Dağı', 'Mem u Zin Türbesi', 'Cizre Ulu Camii', 'Finik Kalesi', 'Kasrik Boğazı', 'İbrahim Hakkı Türbesi']
+        },
+        'Adıyaman': {
+            districts: ['Merkez', 'Kahta', 'Besni', 'Gölbaşı', 'Gerger', 'Sincik', 'Tut', 'Samsat', 'Çelikhan'],
+            dishes: ['Çiğ Köfte', 'Mercimekli Köfte', 'İçli Köfte', 'Besni Tavası', 'Kavurmalı Pilav', 'Yarpuzlu Köfte', 'Semsek', 'Püşürük Çorbası'],
+            places: ['Nemrut Dağı', 'Cendere Köprüsü', 'Perre Antik Kenti', 'Arsemia Antik Kenti', 'Karakuş Tümülüsü', 'Eski Kahta Kalesi', 'Gölbaşı Gölleri']
+        },
+        'Kilis': {
+            districts: ['Merkez', 'Musabeyli', 'Polateli', 'Elbeyli'],
+            dishes: ['Kilis Tava', 'Oruk', 'Malhıtalı Köfte', 'Kilis Katmeri', 'Cennet Çorbası', 'Züngül'],
+            places: ['Ravanda Kalesi', 'Oylum Höyüğü', 'Kilis Mevlevihanesi', 'Neşet Efendi Konağı']
+        },
+        'Bayburt': {
+            districts: ['Merkez', 'Aydıntepe', 'Demirözü'],
+            dishes: ['Bayburt Ketesi', 'Tel Helva', 'Lor Dolması', 'Çılbır', 'Ekşili Çorba', 'Galacoş', 'Kesme Çorba'],
+            places: ['Bayburt Kalesi', 'Aydıntepe Yeraltı Şehri', 'Çoruh Nehri', 'Baksı Müzesi', 'Sırakayalar Şelalesi', 'Kop Dağı']
+        },
+        "tekirdag": {
+            "name": "Tekirdağ",
+            "dishes": [
+                "Tekirdağ Köftesi",
+                "Hayrabolu Tatlısı",
+                "Peynir Helvası",
+                "Tekirdağ Kirazı",
+                "Tekirdağ Rakısı"
+            ],
+            "districts": [
+                "Süleymanpaşa",
+                "Çerkezköy",
+                "Çorlu",
+                "Ergene",
+                "Hayrabolu",
+                "Kapaklı",
+                "Malkara",
+                "Marmaraereğlisi",
+                "Muratlı",
+                "Saray",
+                "Şarköy"
+            ],
+            "places": [
+                "Rakoczi Müzesi",
+                "Namık Kemal Evi",
+                "Rüstem Paşa Camii",
+                "Tekirdağ Arkeoloji ve Etnografya Müzesi",
+                "Barış ve Özgürlük Parkı",
+                "Şarköy Sahili",
+                "Uçmakdere",
+                "Hora Feneri",
+                "Marmara Ereğlisi Plajı"
+            ]
+        },
+        "kirklareli": {
+            "name": "Kırklareli",
+            "dishes": [
+                "Hardaliye",
+                "Kırklareli Köftesi",
+                "Demirköy Manda Yoğurdu",
+                "Poyralı Peyniri",
+                "Kırklareli Mantısı",
+                "Tarhana Çorbası",
+                "Kara Üzüm Pekmezi"
+            ],
+            "districts": [
+                "Merkez",
+                "Babaeski",
+                "Demirköy",
+                "Kofçaz",
+                "Lüleburgaz",
+                "Pehlivanköy",
+                "Pınarhisar",
+                "Vize"
+            ],
+            "places": [
+                "Dupnisa Mağarası",
+                "Kıyıköy",
+                "İğneada Longoz Ormanları",
+                "Vize Kalesi",
+                "Kırklareli Müzesi",
+                "Sokollu Mehmet Paşa Külliyesi",
+                "Aşağı Pınar Höyüğü",
+                "Kıyıköy Kalesi",
+                "İğneada Plajı"
+            ]
+        },
+        "zonguldak": {
+            "name": "Zonguldak",
+            "dishes": [
+                "Zonguldak Kömür Ekmeği",
+                "Devrek Simidi",
+                "Çaycuma Pideleri",
+                "Zonguldak Mantısı",
+                "Karadeniz Pidesi",
+                "Hamsi Tava",
+                "Melengücceği Çorbası"
+            ],
+            "districts": [
+                "Merkez",
+                "Alaplı",
+                "Çaycuma",
+                "Devrek",
+                "Gökçebey",
+                "Kilimli",
+                "Kozlu"
+            ],
+            "places": [
+                "Gökgöl Mağarası",
+                "Cehennemağzı Mağaraları",
+                "Maden Müzesi",
+                "Kapuz Plajı",
+                "Filyos Antik Kenti",
+                "Devrek Bastonu Müzesi",
+                "Karadeniz Ereğli Plajları",
+                "Türkali Plajı",
+                "Zonguldak Saat Kulesi"
+            ]
+        },
+        "eskisehir": {
+            "name": "Eskişehir",
+            "dishes": [
+                "Çibörek",
+                "Met Helvası",
+                "Nuga Helvası",
+                "Haşhaşlı Bükme",
+                "Balaban Kebabı",
+                "Kalabak Suyu",
+                "Göbete"
+            ],
+            "districts": [
+                "Odunpazarı",
+                "Tepebaşı",
+                "Alpu",
+                "Beylikova",
+                "Çifteler",
+                "Günyüzü",
+                "Han",
+                "İnönü",
+                "Mahmudiye",
+                "Mihalgazi",
+                "Mihalıççık",
+                "Sarıcakaya",
+                "Seyitgazi",
+                "Sivrihisar"
+            ],
+            "places": [
+                "Odunpazarı Evleri",
+                "Porsuk Çayı",
+                "Sazova Bilim Kültür ve Sanat Parkı",
+                "Yılmaz Büyükerşen Balmumu Heykeller Müzesi",
+                "Kent Park",
+                "Kurşunlu Camii ve Külliyesi",
+                "Eskişehir Hayvanat Bahçesi",
+                "Frig Vadisi",
+                "Yazılıkaya Anıtları"
+            ]
+        },
+        "usak": {
+            "name": "Uşak",
+            "dishes": [
+                "Uşak Tarhanası",
+                "Keşkek",
+                "Devedişi",
+                "Uşak Böreği",
+                "Cendere",
+                "Alaca Çorba",
+                "Uşak Helvası"
+            ],
+            "districts": [
+                "Merkez",
+                "Banaz",
+                "Eşme",
+                "Karahallı",
+                "Sivaslı",
+                "Ulubey"
+            ],
+            "places": [
+                "Blaundus Antik Kenti",
+                "Uşak Arkeoloji Müzesi",
+                "Ulubey Kanyonu",
+                "Taşyaran Vadisi",
+                "Clandras Köprüsü",
+                "Karun Hazineleri",
+                "Pepuza Antik Kenti",
+                "Mesotimolos Antik Kenti",
+                "Cılandıras Köprüsü"
+            ]
+        },
+        "izmir": {
+            "name": "İzmir",
+            "dishes": [
+                "Boyoz",
+                "İzmir Köfte",
+                "Kumru",
+                "Şambali",
+                "İzmir Lokması",
+                "Çeşme Kumrusu",
+                "Foça Gevreği",
+                "Kemalpaşa Tatlısı",
+                "Tire Köfte"
+            ],
+            "districts": [
+                "Konak",
+                "Karşıyaka",
+                "Bornova",
+                "Buca",
+                "Çiğli",
+                "Gaziemir",
+                "Karabağlar",
+                "Bayraklı",
+                "Balçova",
+                "Narlıdere",
+                "Güzelbahçe",
+                "Aliağa",
+                "Bayındır",
+                "Bergama",
+                "Beydağ",
+                "Çeşme",
+                "Dikili",
+                "Foça",
+                "Karaburun",
+                "Kemalpaşa",
+                "Kınık",
+                "Kiraz",
+                "Menderes",
+                "Menemen",
+                "Ödemiş",
+                "Seferihisar",
+                "Selçuk",
+                "Tire",
+                "Torbalı",
+                "Urla"
+            ],
+            "places": [
+                "Saat Kulesi",
+                "Kemeraltı Çarşısı",
+                "Kordon",
+                "Asansör",
+                "Efes Antik Kenti",
+                "Bergama Akropolü",
+                "Çeşme Kalesi",
+                "Alaçatı",
+                "Şirince",
+                "Kızlarağası Hanı",
+                "Agora Antik Kenti",
+                "İzmir Kuş Cenneti",
+                "Kadifekale"
+            ]
+        },
+        "balikesir": {
+            "name": "Balıkesir",
+            "dishes": [
+                "Höşmerim Tatlısı",
+                "Balıkesir Kaymaklısı",
+                "Susurluk Tostu",
+                "Balıkesir Mantısı",
+                "Peynirli Patlıcan",
+                "Saçaklı Mantı",
+                "Keşkek",
+                "Tirit",
+                "Balıkesir Böreği"
+            ],
+            "districts": [
+                "Altıeylül",
+                "Karesi",
+                "Ayvalık",
+                "Balya",
+                "Bandırma",
+                "Bigadiç",
+                "Burhaniye",
+                "Dursunbey",
+                "Edremit",
+                "Erdek",
+                "Gömeç",
+                "Gönen",
+                "Havran",
+                "İvrindi",
+                "Kepsut",
+                "Manyas",
+                "Marmara",
+                "Savaştepe",
+                "Sındırgı",
+                "Susurluk"
+            ],
+            "places": [
+                "Cunda Adası",
+                "Taksiyarhis Kilisesi",
+                "Şeytan Sofrası",
+                "Kuş Cenneti Milli Parkı",
+                "Kaz Dağları",
+                "Ayvalık Adaları",
+                "Zağnos Paşa Camii",
+                "Yılmaz Akpınar Yıldız Kent Arşivi",
+                "Saat Kulesi",
+                "Bandırma Arkeoloji Müzesi",
+                "Erdek Plajları",
+                "Kapıdağ Yarımadası"
+            ]
+        },
+        "aydin": {
+            "name": "Aydın",
+            "dishes": [
+                "Aydın Keşkeği",
+                "Pide",
+                "Çöp Şiş",
+                "Aydın İnciri",
+                "Aydın Pidesi",
+                "Yuvarlama",
+                "Patlıcan Böreği",
+                "Kestane Şekeri",
+                "Aydın Lokması"
+            ],
+            "districts": [
+                "Efeler",
+                "Bozdoğan",
+                "Buharkent",
+                "Çine",
+                "Didim",
+                "Germencik",
+                "İncirliova",
+                "Karacasu",
+                "Karpuzlu",
+                "Koçarlı",
+                "Köşk",
+                "Kuşadası",
+                "Kuyucak",
+                "Nazilli",
+                "Söke",
+                "Sultanhisar",
+                "Yenipazar"
+            ],
+            "places": [
+                "Kuşadası",
+                "Dilek Yarımadası Milli Parkı",
+                "Afrodisias Antik Kenti",
+                "Milet Antik Kenti",
+                "Priene Antik Kenti",
+                "Didim Apollon Tapınağı",
+                "Nysa Antik Kenti",
+                "Alinda Antik Kenti",
+                "Magnesia Antik Kenti",
+                "Güvercinada Kalesi",
+                "Zeus Mağarası",
+                "Bafa Gölü"
+            ]
+        },
+        "mugla": {
+            "name": "Muğla",
+            "dishes": [
+                "Çökertme Kebabı",
+                "Muğla Köftesi",
+                "Muğla Saraylısı",
+                "Börek",
+                "Keşkek",
+                "Muğla Tarhanası",
+                "Deniz Mahsulleri",
+                "Bodrum Mantısı",
+                "Çam Balı"
+            ],
+            "districts": [
+                "Menteşe",
+                "Bodrum",
+                "Dalaman",
+                "Datça",
+                "Fethiye",
+                "Kavaklıdere",
+                "Köyceğiz",
+                "Marmaris",
+                "Milas",
+                "Ortaca",
+                "Seydikemer",
+                "Ula",
+                "Yatağan"
+            ],
+            "places": [
+                "Bodrum Kalesi",
+                "Ölüdeniz",
+                "Kelebekler Vadisi",
+                "Saklıkent Kanyonu",
+                "Dalyan Kaya Mezarları",
+                "Marmaris Kalesi",
+                "Knidos Antik Kenti",
+                "Kayaköy",
+                "Akyaka",
+                "Kleopatra Plajı",
+                "İztuzu Plajı",
+                "Kaunos Antik Kenti",
+                "Tlos Antik Kenti"
+            ]
+        }
+    };
+
+    // Bölgelere göre şehirler
+    const regions = {
+        marmara: ['İstanbul', 'Bursa', 'Balıkesir', 'Bilecik', 'Çanakkale', 'Edirne', 'Kırklareli', 'Kocaeli', 'Sakarya', 'Tekirdağ', 'Yalova'],
+        ege: ['İzmir', 'Aydın', 'Denizli', 'Kütahya', 'Manisa', 'Muğla', 'Uşak', 'Afyonkarahisar'],
+        akdeniz: ['Antalya', 'Adana', 'Burdur', 'Hatay', 'Isparta', 'Kahramanmaraş', 'Mersin', 'Osmaniye'],
+        icAnadolu: ['Ankara', 'Konya', 'Eskişehir', 'Aksaray', 'Çankırı', 'Karaman', 'Kırıkkale', 'Kırşehir', 'Nevşehir', 'Niğde', 'Sivas', 'Yozgat', 'Kayseri'],
+        karadeniz: ['Trabzon', 'Amasya', 'Artvin', 'Bartın', 'Bayburt', 'Bolu', 'Düzce', 'Giresun', 'Gümüşhane', 'Karabük', 'Kastamonu', 'Ordu', 'Rize', 'Samsun', 'Sinop', 'Tokat', 'Zonguldak'],
+        doguAnadolu: ['Erzurum', 'Ağrı', 'Ardahan', 'Bingöl', 'Bitlis', 'Elazığ', 'Erzincan', 'Hakkari', 'Iğdır', 'Kars', 'Malatya', 'Muş', 'Tunceli', 'Van'],
+        guneydoguAnadolu: ['Gaziantep', 'Adıyaman', 'Batman', 'Diyarbakır', 'Mardin', 'Siirt', 'Şanlıurfa', 'Şırnak']
+    };
+
+    function updateStatistics() {
+        // Ziyaret edilen şehirleri say
+        let visitedCities = 0;
+        const visited = {};
+        
+        Object.keys(regions).forEach(region => {
+            visited[region] = 0;
+            regions[region].forEach(city => {
+                if(localStorage.getItem('visit_' + city)) {
+                    visitedCities++;
+                    visited[region]++;
+                }
+            });
+        });
+
+        // Türkiye geneli istatistikleri güncelle
+        const totalCities = 81;
+        const turkeyPercent = Math.round((visitedCities / totalCities) * 100);
+        document.getElementById('turkeyProgress').style.width = turkeyPercent + '%';
+        document.getElementById('turkeyProgress').textContent = turkeyPercent + '%';
+        document.getElementById('visitedCityCount').textContent = visitedCities;
+        document.getElementById('totalCityCount').textContent = totalCities;
+
+        // Bölge istatistiklerini güncelle
+        Object.keys(regions).forEach(region => {
+            const regionPercent = Math.round((visited[region] / regions[region].length) * 100);
+            document.getElementById(region + 'Progress').style.width = regionPercent + '%';
+            document.getElementById(region + 'Percent').textContent = regionPercent + '%';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var obj = document.getElementById('turkey-map');
+        var tooltip = document.getElementById('city-tooltip');
+        var visitModal = new bootstrap.Modal(document.getElementById('visitModal'));
+        var selectedCity = '';
+        
+        function initializeMap() {
+            var svgDoc = obj.contentDocument;
+            if (!svgDoc) {
+                console.log('SVG henüz yüklenmedi, tekrar deneniyor...');
+                setTimeout(initializeMap, 100);
+                return;
+            }
+
+            var paths = svgDoc.getElementsByTagName('path');
+            console.log('Paths bulundu:', paths.length);
+            
+            // Ziyaret edilen şehirleri işaretle
+            for(var i = 0; i < paths.length; i++) {
+                var path = paths[i];
+                
+                // Varsayılan rengi ayarla
+                path.style.fill = '#6f9c76';
+                path.style.stroke = '#ffffff';
+                path.style.strokeWidth = '0.5';
+                path.style.cursor = 'pointer';
+                
+                // Ziyaret edilmiş mi kontrol et
+                if(localStorage.getItem('visit_' + path.getAttribute('name'))) {
+                    path.style.fill = '#e74c3c';
+                    path.classList.add('visited');
+                }
+                
+                // Event listeners ekle
+                path.addEventListener('mouseover', function(e) {
+                    if(!this.classList.contains('visited')) {
+                        this.style.fill = '#2d5a27';
+                    }
+                    
+                    var cityName = this.getAttribute('name');
+                    tooltip.textContent = cityName;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.pageX + 10 + 'px';
+                    tooltip.style.top = e.pageY + 10 + 'px';
+                });
+                
+                path.addEventListener('mousemove', function(e) {
+                    tooltip.style.left = e.pageX + 10 + 'px';
+                    tooltip.style.top = e.pageY + 10 + 'px';
+                });
+                
+                path.addEventListener('mouseout', function() {
+                    if(!this.classList.contains('visited')) {
+                        this.style.fill = '#6f9c76';
+                    }
+                    tooltip.style.display = 'none';
+                });
+                
+                path.addEventListener('click', function(e) {
+                    selectedCity = this.getAttribute('name');
+                    document.querySelectorAll('.selected-city-name').forEach(el => el.textContent = selectedCity);
+                    
+                    var visitData = localStorage.getItem('visit_' + selectedCity);
+                    document.getElementById('visitedCheckbox').checked = !!visitData;
+                    
+                    showCityInfo();
+                    visitModal.show();
+                });
+            }
+            
+            updateStatistics();
+        }
+
+        // SVG yüklendiğinde haritayı başlat
+        obj.addEventListener('load', initializeMap);
+        
+        // Eğer SVG zaten yüklendiyse direkt başlat
+        if (obj.contentDocument) {
+            initializeMap();
+        }
+    });
+
+    function showCityInfo() {
+        const cityName = document.querySelector('.selected-city-name').textContent;
+        const city = cityData[cityName] || { districts: [], dishes: [], places: [] };
+        
+        // Meşhur yemekleri göster
+        document.getElementById('cityDishes').innerHTML = city.dishes.map(dish => 
+            `<div class="info-item">
+                <i class="bi bi-circle-fill"></i>
+                <span>${dish}</span>
+            </div>`
+        ).join('');
+        
+        // İlçeleri göster
+        document.getElementById('cityDistricts').innerHTML = city.districts.map(district => 
+            `<div class="info-item">
+                <i class="bi bi-circle-fill"></i>
+                <span>${district}</span>
+            </div>`
+        ).join('');
+        
+        // Gezilecek yerleri göster
+        document.getElementById('cityPlaces').innerHTML = city.places.map(place => 
+            `<div class="info-item">
+                <i class="bi bi-circle-fill"></i>
+                <span>${place}</span>
+            </div>`
+        ).join('');
+    }
+
+    function toggleVisitDetails() {
+        const visitDetails = document.getElementById('visitDetails');
+        const isChecked = document.getElementById('visitedCheckbox').checked;
+        const cityName = document.querySelector('.selected-city-name').textContent;
+        
+        if(isChecked) {
+            // Şehri hemen kırmızı yap ve ziyaret edildi olarak işaretle
+            const svgDoc = document.getElementById('turkey-map').contentDocument;
+            const cityPath = svgDoc.querySelector(`path[name="${cityName}"]`);
+            if(cityPath) {
+                cityPath.style.fill = '#e74c3c';
+                cityPath.classList.add('visited');
+            }
+            
+            // Basit bir ziyaret verisi oluştur ve kaydet
+            const visitData = {
+                city: cityName,
+                date: new Date().toISOString().split('T')[0]
+            };
+            localStorage.setItem('visit_' + cityName, JSON.stringify(visitData));
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+            
+            // Toast mesajını göster
+            showSaveToast();
+            
+            // Modalı kapat
+            const visitModal = bootstrap.Modal.getInstance(document.getElementById('visitModal'));
+            visitModal.hide();
+        } else {
+            // Ziyaret işaretini kaldır
+            const svgDoc = document.getElementById('turkey-map').contentDocument;
+            const cityPath = svgDoc.querySelector(`path[name="${cityName}"]`);
+            if(cityPath) {
+                cityPath.style.fill = '#6f9c76';
+                cityPath.classList.remove('visited');
+            }
+            
+            // LocalStorage'dan ziyaret verisini sil
+            localStorage.removeItem('visit_' + cityName);
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+        }
+    }
+
+    // Tarihi düzgün formatlayan yardımcı fonksiyon
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleDateString('tr-TR');
+    }
+
+    // LocalStorage'ı temizleme fonksiyonu
+    function clearVisitData() {
+        if (confirm('Tüm ziyaret verilerini silmek istediğinize emin misiniz?')) {
+            const keys = Object.keys(localStorage);
+            keys.forEach(key => {
+                if (key.startsWith('visit_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            location.reload();
+        }
+    }
+
+    // Ziyaret verilerini kaydetme
+    function saveVisitDetails() {
+        const cityName = document.querySelector('.selected-city-name').textContent;
+        const visitDate = document.getElementById('visitDate').value;
+        const foodNotes = document.getElementById('foodNotes').value;
+        const placeNotes = document.getElementById('placeNotes').value;
+        const notes = document.getElementById('notes').value;
+        
+        const visitData = {
+            city: cityName,
+            date: visitDate,
+            food: foodNotes,
+            places: placeNotes,
+            notes: notes
+        };
+        
+        localStorage.setItem('visit_' + cityName, JSON.stringify(visitData));
+        
+        // Haritadaki şehri kırmızı olarak işaretle
+        const svgDoc = document.getElementById('turkey-map').contentDocument;
+        const cityPath = svgDoc.querySelector(`path[name="${cityName}"]`);
+        if(cityPath) {
+            cityPath.style.fill = '#e74c3c';
+            cityPath.classList.add('visited');
+        }
+        
+        updateStatistics();
+        showSaveToast();
+        
+        // Modalı kapat
+        const visitModal = bootstrap.Modal.getInstance(document.getElementById('visitModal'));
+        visitModal.hide();
+    }
+
+    function showVisitDetails(data = null) {
+        const visitDetails = document.getElementById('visitDetails');
+        const isChecked = document.getElementById('visitedCheckbox').checked;
+        visitDetails.style.display = isChecked ? 'block' : 'none';
+
+        // Form alanlarını temizle
+        document.getElementById('visitDate').value = '';
+        document.getElementById('foodNotes').value = '';
+        document.getElementById('placeNotes').value = '';
+        document.getElementById('notes').value = '';
+        
+        // Eğer data varsa form alanlarını doldur
+        if(data) {
+            document.getElementById('visitDate').value = data.date || '';
+            document.getElementById('foodNotes').value = data.food || '';
+            document.getElementById('placeNotes').value = data.places || '';
+            document.getElementById('notes').value = data.notes || '';
+        }
+        
+        // Highlighting özelliğini aktifleştir
+        setupHighlighting();
+    }
+
+    function setupHighlighting() {
+        const cityName = document.querySelector('.selected-city-name').textContent;
+        const city = cityData[cityName] || { districts: [], dishes: [], places: [] };
+        
+        const foodNotesInput = document.getElementById('foodNotes');
+        const placeNotesInput = document.getElementById('placeNotes');
+        
+        foodNotesInput.addEventListener('input', () => {
+            highlightMatches(foodNotesInput, city.dishes);
+        });
+        
+        placeNotesInput.addEventListener('input', () => {
+            highlightMatches(placeNotesInput, [...city.districts, ...city.places]);
+        });
+    }
+
+    // Stats paneline temizleme butonu ekle
+    document.querySelector('.stats-header').innerHTML += `
+        <button onclick="clearVisitData()" class="btn btn-sm btn-danger mt-2">
+            <i class="bi bi-trash"></i>
+            Tüm Verileri Temizle
+        </button>
+    `;
+
+    function showShareModal() {
+        const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+        shareModal.show();
+        
+        // Modal gösterildikten sonra istatistikleri güncelle
+        setTimeout(() => {
+            updateShareStatistics();
+        }, 100);
+    }
+
+    function updateShareStatistics() {
+        // Ziyaret edilen şehirleri say
+        let visitedCities = 0;
+        const visited = {};
+        
+        Object.keys(regions).forEach(region => {
+            visited[region] = 0;
+            regions[region].forEach(city => {
+                if(localStorage.getItem('visit_' + city)) {
+                    visitedCities++;
+                    visited[region]++;
+                }
+            });
+        });
+
+        // Toplam istatistikleri güncelle
+        const totalPercent = Math.round((visitedCities / 81) * 100);
+        document.getElementById('shareVisitedCount').textContent = visitedCities;
+        document.getElementById('shareTotalProgress').style.width = totalPercent + '%';
+
+        // Bölge istatistiklerini güncelle
+        Object.keys(regions).forEach(region => {
+            const regionPercent = Math.round((visited[region] / regions[region].length) * 100);
+            const progressElement = document.getElementById('share' + region.charAt(0).toUpperCase() + region.slice(1) + 'Progress');
+            if(progressElement) {
+                progressElement.innerHTML = `<div style="width: ${regionPercent}%"></div>`;
+            }
+        });
+
+        // Harita görüntüsünü güncelle
+        updateShareMap();
+    }
+
+    function updateShareMap() {
+        const mapContainer = document.getElementById('shareMapContainer');
+        const originalMap = document.getElementById('turkey-map');
+        
+        // Harita container'ını temizle
+        mapContainer.innerHTML = '';
+        
+        // SVG içeriğini kopyala
+        const svgContent = originalMap.contentDocument.documentElement.cloneNode(true);
+        svgContent.setAttribute('width', '100%');
+        svgContent.setAttribute('height', '100%');
+        svgContent.setAttribute('viewBox', '0 0 1050 550');
+        svgContent.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        
+        // SVG elementini doğrudan ekle
+        mapContainer.appendChild(svgContent);
+        
+        // Şehirleri işaretle
+        const paths = svgContent.getElementsByTagName('path');
+        for(let path of paths) {
+            const cityName = path.getAttribute('name');
+            
+            // Varsayılan stiller
+            path.style.fill = '#6f9c76';
+            path.style.stroke = '#ffffff';
+            path.style.strokeWidth = '0.5';
+            
+            // Ziyaret edilmiş şehirleri kırmızı yap
+            if(localStorage.getItem('visit_' + cityName)) {
+                path.style.fill = '#e74c3c';
+            }
+        }
+    }
+
+    function downloadShareImage() {
+        const shareStats = document.querySelector('.share-stats');
+        
+        // Haritanın yüklenmesi için bekle
+        setTimeout(() => {
+            html2canvas(shareStats, {
+                allowTaint: true,
+                useCORS: true,
+                scale: 2,
+                backgroundColor: '#f8f9fa',
+                onclone: function(clonedDoc) {
+                    const clonedStats = clonedDoc.querySelector('.share-stats');
+                    clonedStats.style.padding = '2rem';
+                    clonedStats.style.borderRadius = '20px';
+                    
+                    // SVG elementini düzgün şekilde kopyala
+                    const originalSvg = document.querySelector('#shareMapContainer svg');
+                    if (originalSvg) {
+                        const clonedMap = clonedDoc.querySelector('#shareMapContainer');
+                        clonedMap.innerHTML = originalSvg.outerHTML;
+                    }
+                }
+            }).then(canvas => {
+                const image = canvas.toDataURL('image/png', 1.0);
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = 'gezi-istatistiklerim.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }, 500);
+    }
+
+    function shareToWhatsApp() {
+        // WhatsApp paylaşım URL'si
+        const text = encodeURIComponent("2025 Türkiye Gezi İstatistiklerim! 🗺️\n" +
+            `Toplam ${document.getElementById('shareVisitedCount').textContent} şehir gezdim!\n` +
+            "Siz de gezilerinizi takip etmek için: [URL]");
+        window.open(`https://wa.me/?text=${text}`);
+    }
+
+    function shareToInstagram() {
+        const shareStats = document.querySelector('.share-stats');
+        
+        // Haritanın yüklenmesi için bekle
+        setTimeout(() => {
+            html2canvas(shareStats, {
+                allowTaint: true,
+                useCORS: true,
+                scale: 2,
+                backgroundColor: '#f8f9fa',
+                onclone: function(clonedDoc) {
+                    const clonedStats = clonedDoc.querySelector('.share-stats');
+                    clonedStats.style.padding = '2rem';
+                    clonedStats.style.borderRadius = '20px';
+                    
+                    // SVG elementini düzgün şekilde kopyala
+                    const originalSvg = document.querySelector('#shareMapContainer svg');
+                    if (originalSvg) {
+                        const clonedMap = clonedDoc.querySelector('#shareMapContainer');
+                        clonedMap.innerHTML = originalSvg.outerHTML;
+                    }
+                }
+            }).then(canvas => {
+                const image = canvas.toDataURL('image/png', 1.0);
+                downloadImage(image, 'gezi-istatistiklerim.png');
+                alert('Görüntü indirildi! Instagram Stories\'e yükleyebilirsiniz.');
+            });
+        }, 500);
+    }
+
+    function downloadImage(dataUrl, filename) {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // html2canvas kütüphanesini ekle
+    const script = document.createElement('script');
+    script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+    document.head.appendChild(script);
+
+    function showNoteModal() {
+        const cityName = document.querySelector('.selected-city-name').textContent;
+        const visitData = localStorage.getItem('visit_' + cityName);
+        
+        // Mevcut notları yükle
+        if(visitData) {
+            const data = JSON.parse(visitData);
+            document.getElementById('noteDate').value = data.date || '';
+            document.getElementById('noteText').value = data.notes || '';
+            document.getElementById('foodNotes').value = data.food || '';
+            document.getElementById('placeNotes').value = data.places || '';
+        } else {
+            // Form alanlarını temizle
+            document.getElementById('noteDate').value = '';
+            document.getElementById('noteText').value = '';
+            document.getElementById('foodNotes').value = '';
+            document.getElementById('placeNotes').value = '';
+        }
+        
+        // Not modalını göster
+        const noteModal = new bootstrap.Modal(document.getElementById('noteModal'));
+        noteModal.show();
+    }
+
+    function saveNote() {
+        const cityName = document.querySelector('.selected-city-name').textContent;
+        const noteDate = document.getElementById('noteDate').value;
+        const noteText = document.getElementById('noteText').value;
+        const foodNotes = document.getElementById('foodNotes').value;
+        const placeNotes = document.getElementById('placeNotes').value;
+        
+        // Notları kaydet
+        const visitData = {
+            city: cityName,
+            date: noteDate,
+            notes: noteText,
+            food: foodNotes,
+            places: placeNotes
+        };
+        
+        localStorage.setItem('visit_' + cityName, JSON.stringify(visitData));
+        
+        // Blog sayfasına yönlendir
+        window.location.href = '/Blog';
+        
+        // Modalı kapat
+        const noteModal = bootstrap.Modal.getInstance(document.getElementById('noteModal'));
+        noteModal.hide();
+        
+        // Toast mesajı göster
+        showSaveToast();
+    }
+
+    // Şehir verilerini yükleme fonksiyonu
+    function loadCityData(cityId) {
+        const city = cityData[cityId.toLowerCase()];
+        if (!city) return;
+
+        document.querySelector('.selected-city-name').textContent = city.name;
+
+        // Yemekleri yükle
+        const dishesHtml = city.dishes.map(dish => `<div class="info-item">${dish}</div>`).join('');
+        document.getElementById('cityDishes').innerHTML = dishesHtml;
+
+        // İlçeleri yükle
+        const districtsHtml = city.districts.map(district => `<div class="info-item">${district}</div>`).join('');
+        document.getElementById('cityDistricts').innerHTML = districtsHtml;
+
+        // Gezilecek yerleri yükle
+        const placesHtml = city.places.map(place => `<div class="info-item">${place}</div>`).join('');
+        document.getElementById('cityPlaces').innerHTML = placesHtml;
+    }
+</script>

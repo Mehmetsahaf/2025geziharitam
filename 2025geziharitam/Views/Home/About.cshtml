@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Hakkımızda";
+}
+
+<style>
+    .about-section {
+        padding: 4rem 0;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        margin: 2rem 0;
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .about-header h2 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .about-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .feature-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background-color: #6f9c76;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .feature-icon i {
+        color: white;
+        font-size: 1.8rem;
+    }
+
+    .feature-title {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        text-align: center;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .stats-section {
+        background-color: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-top: 3rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        color: #6f9c76;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="about-section">
+    <div class="container">
+        <div class="about-header">
+            <h2>Kültürüm Projesi</h2>
+            <p>Türkiye'nin kültürel zenginliklerini keşfetmenin en interaktif yolu</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-map"></i>
+                    </div>
+                    <h4 class="feature-title">İnteraktif Harita</h4>
+                    <p class="feature-description">
+                        81 ili kapsayan detaylı ve etkileşimli Türkiye haritası ile şehirleri keşfedin.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h4 class="feature-title">Kültürel Bilgiler</h4>
+                    <p class="feature-description">
+                        Her şehrin yerel lezzetleri, tarihi mekanları ve kültürel değerleri hakkında detaylı bilgiler.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-bookmark-check"></i>
+                    </div>
+                    <h4 class="feature-title">Kişisel Deneyim</h4>
+                    <p class="feature-description">
+                        Ziyaret ettiğiniz şehirleri işaretleyerek kendi gezi haritanızı oluşturun.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">81</div>
+                        <div class="stat-label">İl</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Yöresel Lezzet</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Tarihi Mekan</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">300+</div>
+                        <div class="stat-label">Kültürel Etkinlik</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

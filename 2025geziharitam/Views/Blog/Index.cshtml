@@ -1,0 +1,186 @@
+@using kültürüm.Models
+@{
+    ViewData["Title"] = "Gezi Blogum";
+}
+
+<div class="blog-container">
+    <div class="blog-header">
+        <h1>Gezi Blogum</h1>
+        <p>Türkiye'de gezdiğim şehirler ve deneyimlerim</p>
+    </div>
+
+    <div class="blog-posts" id="blogPosts">
+        <!-- Blog gönderileri JavaScript ile buraya eklenecek -->
+    </div>
+</div>
+
+<style>
+    .blog-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .blog-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #2d5a27 0%, #3d7a37 100%);
+        color: white;
+        border-radius: 15px;
+    }
+
+    .blog-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .blog-posts {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .blog-post {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .blog-post:hover {
+        transform: translateY(-5px);
+    }
+
+    .post-header {
+        background: #2d5a27;
+        color: white;
+        padding: 1.5rem;
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .post-date {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .post-content {
+        padding: 1.5rem;
+    }
+
+    .post-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .post-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .post-section h3 {
+        color: #2d5a27;
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .post-section h3 i {
+        font-size: 1rem;
+    }
+
+    .post-section p {
+        color: #666;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+    .no-posts {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .no-posts p {
+        color: #666;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        displayBlogPosts();
+    });
+
+    function displayBlogPosts() {
+        const blogPostsContainer = document.getElementById('blogPosts');
+        const posts = [];
+
+        // LocalStorage'dan tüm gezi verilerini al
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('visit_')) {
+                const data = JSON.parse(localStorage.getItem(key));
+                if (data.notes || data.food || data.places) { // Sadece notu olan gezileri göster
+                    posts.push(data);
+                }
+            }
+        }
+
+        // Tarihe göre sırala (en yeni en üstte)
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (posts.length === 0) {
+            blogPostsContainer.innerHTML = `
+                <div class="no-posts">
+                    <p>Henüz hiç gezi yazısı eklenmemiş.</p>
+                    <p class="text-muted">Haritadan bir şehir seçip gezi notlarınızı ekleyebilirsiniz.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Blog postlarını oluştur
+        const createPostElement = (post) => {
+            return `
+                <div class="blog-post">
+                    <div class="post-header">
+                        <h2 class="post-title">${post.city}</h2>
+                        <div class="post-date">${new Date(post.date).toLocaleDateString('tr-TR')}</div>
+                    </div>
+                    <div class="post-content">
+                        ${post.notes ? `
+                            <div class="post-section">
+                                <h3><i class="bi bi-journal-text"></i> Gezi Notlarım</h3>
+                                <p>${post.notes}</p>
+                            </div>
+                        ` : ''}
+                        ${post.food ? `
+                            <div class="post-section">
+                                <h3><i class="bi bi-egg-fried"></i> Ne Yedim?</h3>
+                                <p>${post.food}</p>
+                            </div>
+                        ` : ''}
+                        ${post.places ? `
+                            <div class="post-section">
+                                <h3><i class="bi bi-geo-alt"></i> Nereyi Gezdim?</h3>
+                                <p>${post.places}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        };
+
+        blogPostsContainer.innerHTML = posts.map(post => createPostElement(post)).join('');
+    }
+</script> 

@@ -1,0 +1,67 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* Harita stilleri */
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#turkey-map {
+    width: 100%;
+    height: auto;
+}
+
+/* Tooltip stilleri */
+#city-tooltip {
+    position: absolute;
+    display: none;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* SVG path ve circle stilleri */
+#turkey-map path,
+#turkey-map circle {
+    fill: #6f9c76;
+    stroke: #ffffff;
+    stroke-width: 0.5;
+    transition: fill 0.3s;
+}
+
+#turkey-map path:hover,
+#turkey-map circle:hover {
+    fill: #4a7a51;
+    cursor: pointer;
+}
+
+#turkey-map path.visited,
+#turkey-map circle.visited {
+    fill: #e74c3c;
+}

@@ -1,0 +1,125 @@
+@{
+    ViewData["Title"] = "İletişim";
+}
+
+<style>
+    .contact-section {
+        padding: 4rem 0;
+    }
+
+    .contact-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .contact-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .contact-header h2 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .contact-info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .contact-info-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        background-color: #6f9c76;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .contact-icon i {
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .contact-text {
+        flex: 1;
+    }
+
+    .contact-text h5 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .contact-text p {
+        margin: 0;
+        color: #666;
+    }
+</style>
+
+<div class="contact-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <h2>İletişim Bilgileri</h2>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h5>Ad Soyad</h5>
+                            <p>Mehmet Sahaf Bayrakçı</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h5>E-posta</h5>
+                            <p>mehmetsahafb@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-instagram"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h5>Instagram</h5>
+                            <p>@@mehmetsahaf</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h5>Adres</h5>
+                            <p>Bursa Uludağ Üniversitesi İnegöl İşletme Fakültesi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
