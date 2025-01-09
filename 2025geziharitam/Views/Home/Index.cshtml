@@ -90,10 +90,10 @@
                 <div class="region-stat">
                     <div class="region-header">
                         <span>Güneydoğu Anadolu</span>
-                        <span id="guneydoguPercent">0%</span>
+                        <span id="guneydoguAnadoluPercent">0%</span>
                     </div>
                     <div class="progress">
-                        <div id="guneydoguProgress" class="progress-bar bg-guneydogu" role="progressbar" style="width: 0%"></div>
+                        <div id="guneydoguAnadoluProgress" class="progress-bar bg-guneydogu" role="progressbar" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -279,7 +279,7 @@
                                 </div>
                                 <div class="share-region-item">
                                     <div class="region-name">Güneydoğu Anadolu</div>
-                                    <div id="shareGuneydoguProgress" class="region-progress"></div>
+                                    <div id="shareGuneydoguAnadoluProgress" class="region-progress"></div>
                                 </div>
                             </div>
                         </div>
@@ -897,8 +897,10 @@
     }
 
     .share-header p {
-        color: #666;
-        font-size: 1.1rem;
+        color: #2d5a27;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0;
     }
 
     .share-progress {
@@ -950,6 +952,14 @@
         font-weight: 600;
         color: #2d5a27;
         margin-bottom: 0.5rem;
+    }
+
+    .region-name small {
+        display: block;
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.25rem;
+        font-weight: 500;
     }
 
     .region-progress {
@@ -1212,9 +1222,9 @@
             places: ['Mevlana Müzesi', 'Alaeddin Tepesi', 'Aziziye Camii', 'Karatay Medresesi', 'İnce Minareli Medrese', 'Beyşehir Gölü']
         },
         'Eskişehir': {
-            districts: ['Tepebaşı', 'Odunpazarı', 'Sivrihisar', 'Çifteler', 'Mahmudiye', 'Seyitgazi', 'Alpu', 'Beylikova', 'İnönü', 'Günyüzü', 'Mihalgazi', 'Sarıcakaya', 'Han', 'Mihallıçcık'],
-            dishes: ['Çibörek', 'Met Helvası', 'Balaban Kebap', 'Haşhaşlı Bükme', 'Göbete', 'Pazırık', 'Kalabak Suyu', 'Nuga Helvası', 'Mercimekli Mantı', 'Eskişehir Simidi'],
-            places: ['Odunpazarı Evleri', 'Porsuk Çayı', 'Sazova Parkı', 'Kurşunlu Camii', 'Yazılıkaya', 'Frig Vadisi', 'Kent Park', 'Eskişehir Bilim Deney Merkezi', 'Yılmaz Büyükerşen Balmumu Müzesi', 'Atlıhan El Sanatları Çarşısı']
+            districts: ['Odunpazarı', 'Tepebaşı', 'Sivrihisar', 'Çifteler', 'Mahmudiye', 'Seyitgazi', 'Alpu', 'Beylikova', 'Günyüzü', 'Han', 'İnönü', 'Mihalgazi', 'Mihalıççık', 'Sarıcakaya'],
+            dishes: ['Çibörek', 'Met Helvası', 'Balaban Kebabı', 'Haşhaşlı Bükme', 'Kalabak Suyu', 'Nuga Helvası', 'Göbete', 'Pazırık', 'Mercimekli Mantı', 'Kuzu Sorpa'],
+            places: ['Odunpazarı Evleri', 'Porsuk Çayı', 'Sazova Parkı', 'Yılmaz Büyükerşen Balmumu Heykeller Müzesi', 'Kent Park', 'Kurşunlu Külliyesi', 'Atlıhan El Sanatları Çarşısı', 'Yazılıkaya Vadisi', 'Frig Vadisi', 'Sivrihisar Ulu Camii', 'Pessinus Antik Kenti', 'Eskişehir Bilim Deney Merkezi', 'Çağdaş Cam Sanatları Müzesi', 'Kentpark Lunapark']
         },
         'Kayseri': {
             districts: ['Melikgazi', 'Kocasinan', 'Talas', 'Develi', 'Yahyalı', 'Bünyan', 'İncesu', 'Pınarbaşı', 'Tomarza'],
@@ -1849,14 +1859,26 @@
 
     // Bölgelere göre şehirler
     const regions = {
-        marmara: ['İstanbul', 'Bursa', 'Balıkesir', 'Bilecik', 'Çanakkale', 'Edirne', 'Kırklareli', 'Kocaeli', 'Sakarya', 'Tekirdağ', 'Yalova'],
-        ege: ['İzmir', 'Aydın', 'Denizli', 'Kütahya', 'Manisa', 'Muğla', 'Uşak', 'Afyonkarahisar'],
-        akdeniz: ['Antalya', 'Adana', 'Burdur', 'Hatay', 'Isparta', 'Kahramanmaraş', 'Mersin', 'Osmaniye'],
-        icAnadolu: ['Ankara', 'Konya', 'Eskişehir', 'Aksaray', 'Çankırı', 'Karaman', 'Kırıkkale', 'Kırşehir', 'Nevşehir', 'Niğde', 'Sivas', 'Yozgat', 'Kayseri'],
-        karadeniz: ['Trabzon', 'Amasya', 'Artvin', 'Bartın', 'Bayburt', 'Bolu', 'Düzce', 'Giresun', 'Gümüşhane', 'Karabük', 'Kastamonu', 'Ordu', 'Rize', 'Samsun', 'Sinop', 'Tokat', 'Zonguldak'],
-        doguAnadolu: ['Erzurum', 'Ağrı', 'Ardahan', 'Bingöl', 'Bitlis', 'Elazığ', 'Erzincan', 'Hakkari', 'Iğdır', 'Kars', 'Malatya', 'Muş', 'Tunceli', 'Van'],
-        guneydoguAnadolu: ['Gaziantep', 'Adıyaman', 'Batman', 'Diyarbakır', 'Mardin', 'Siirt', 'Şanlıurfa', 'Şırnak']
+        marmara: ['Istanbul', 'Bursa', 'Balikesir', 'Bilecik', 'Çanakkale', 'Edirne', 'Kirklareli', 'Kocaeli', 'Sakarya', 'Tekirdag', 'Yalova'],
+        ege: ['Izmir', 'Aydin', 'Denizli', 'Kutahya', 'Manisa', 'Mugla', 'Usak', 'Afyonkarahisar'],
+        akdeniz: ['Antalya', 'Adana', 'Burdur', 'Hatay', 'Isparta', 'K.Maras', 'Mersin', 'Osmaniye'],
+        icAnadolu: ['Ankara', 'Konya', 'Eskisehir', 'Aksaray', 'Çankiri', 'Karaman', 'Kırıkkale', 'Kirsehir', 'Nevsehir', 'Nigde', 'Sivas', 'Yozgat', 'Kayseri'],
+        karadeniz: ['Trabzon', 'Amasya', 'Artvin', 'Bartin', 'Bayburt', 'Bolu', 'Düzce', 'Giresun', 'Gümüshane', 'Karabük', 'Kastamonu', 'Ordu', 'Rize', 'Samsun', 'Sinop', 'Tokat', 'Zonguldak', 'Çorum'],
+        doguAnadolu: ['Erzurum', 'Agri', 'Ardahan', 'Bingöl', 'Bitlis', 'Elazig', 'Erzincan', 'Hakkari', 'Igdir', 'Kars', 'Malatya', 'Mus', 'Tunceli', 'Van'],
+        guneydoguAnadolu: ['Gaziantep', 'Adiyaman', 'Batman', 'Diyarbakir', 'Mardin', 'Siirt', 'Sanliurfa', 'Sirnak', 'Kilis']
     };
+
+    // Şehir sayısını kontrol etmek için bir fonksiyon ekleyelim
+    function logTotalCities() {
+        let total = 0;
+        Object.keys(regions).forEach(region => {
+            total += regions[region].length;
+            console.log(`${region}: ${regions[region].length} şehir`);
+        });
+        console.log(`Toplam: ${total} şehir`);
+    }
+    // Fonksiyonu çağıralım
+    logTotalCities();
 
     function updateStatistics() {
         // Ziyaret edilen şehirleri say
@@ -1962,6 +1984,29 @@
             updateStatistics();
         }
 
+        // SVG haritasındaki şehir isimlerini kontrol etmek için
+        function checkSVGCityNames() {
+            var svgDoc = obj.contentDocument;
+            if (!svgDoc) {
+                console.log('SVG henüz yüklenmedi');
+                return;
+            }
+            var paths = svgDoc.getElementsByTagName('path');
+            let cityNames = [];
+            for(var i = 0; i < paths.length; i++) {
+                cityNames.push(paths[i].getAttribute('name'));
+            }
+            console.log('SVG haritasındaki şehir isimleri:', cityNames.sort());
+        }
+        
+        // SVG yüklendiğinde şehir isimlerini kontrol et
+        obj.addEventListener('load', checkSVGCityNames);
+        
+        // Eğer SVG zaten yüklendiyse direkt kontrol et
+        if (obj.contentDocument) {
+            checkSVGCityNames();
+        }
+        
         // SVG yüklendiğinde haritayı başlat
         obj.addEventListener('load', initializeMap);
         
@@ -2179,17 +2224,100 @@
         document.getElementById('shareVisitedCount').textContent = visitedCities;
         document.getElementById('shareTotalProgress').style.width = totalPercent + '%';
 
+        // Türkiye geneli için lakap belirleme
+        let turkiyeLakap = '';
+        if (totalPercent === 100) turkiyeLakap = 'Türkiye Kâşifi 🏆';
+        else if (totalPercent >= 75) turkiyeLakap = 'Gezgin Yıldız ⭐';
+        else if (totalPercent >= 50) turkiyeLakap = 'Yolcu 🌟';
+        else if (totalPercent >= 25) turkiyeLakap = 'Gezgin Adayı 🌱';
+        else turkiyeLakap = 'Yeni Gezgin 🌍';
+
+        // Türkiye geneli lakabını güncelle
+        document.querySelector('.share-header p').textContent = turkiyeLakap;
+
+        // Bölge lakapları
+        const bolgeLakapları = {
+            marmara: {
+                100: 'Marmara Sefiri 👑',
+                75: 'Marmara Gezgini ⚓',
+                50: 'Marmara Yolcusu 🌊',
+                25: 'Marmara Keşifçisi 🗺️'
+            },
+            ege: {
+                100: 'Ege Sultanı 👑',
+                75: 'Ege Gezgini 🏺',
+                50: 'Ege Yolcusu 🌅',
+                25: 'Ege Keşifçisi 🏖️'
+            },
+            akdeniz: {
+                100: 'Akdeniz Kaptanı ⚓',
+                75: 'Akdeniz Gezgini 🌊',
+                50: 'Akdeniz Yolcusu 🏖️',
+                25: 'Akdeniz Keşifçisi 🗺️'
+            },
+            icAnadolu: {
+                100: 'Anadolu Beyi 👑',
+                75: 'Anadolu Gezgini 🌾',
+                50: 'Anadolu Yolcusu 🌄',
+                25: 'Anadolu Keşifçisi 🗺️'
+            },
+            karadeniz: {
+                100: 'Karadeniz Fatihi ⚓',
+                75: 'Karadeniz Gezgini 🌲',
+                50: 'Karadeniz Yolcusu ⛰️',
+                25: 'Karadeniz Keşifçisi 🗺️'
+            },
+            doguAnadolu: {
+                100: 'Doğu Fatihi 👑',
+                75: 'Doğu Gezgini 🏔️',
+                50: 'Doğu Yolcusu 🌄',
+                25: 'Doğu Keşifçisi 🗺️'
+            },
+            guneydoguAnadolu: {
+                100: 'Güneydoğu Sultanı 👑',
+                75: 'Güneydoğu Gezgini 🏰',
+                50: 'Güneydoğu Yolcusu 🌅',
+                25: 'Güneydoğu Keşifçisi 🗺️'
+            }
+        };
+
         // Bölge istatistiklerini güncelle
         Object.keys(regions).forEach(region => {
             const regionPercent = Math.round((visited[region] / regions[region].length) * 100);
             const progressElement = document.getElementById('share' + region.charAt(0).toUpperCase() + region.slice(1) + 'Progress');
+            
+            // Bölge lakabını belirle
+            let lakap = 'Yeni Gezgin 🌍';
+            if (regionPercent === 100) lakap = bolgeLakapları[region][100];
+            else if (regionPercent >= 75) lakap = bolgeLakapları[region][75];
+            else if (regionPercent >= 50) lakap = bolgeLakapları[region][50];
+            else if (regionPercent >= 25) lakap = bolgeLakapları[region][25];
+
+            // Progress bar ve lakabı güncelle
             if(progressElement) {
+                const regionItem = progressElement.closest('.share-region-item');
+                const regionName = regionItem.querySelector('.region-name');
+                regionName.innerHTML = `${getRegionDisplayName(region)}<br><small>${lakap}</small>`;
                 progressElement.innerHTML = `<div style="width: ${regionPercent}%"></div>`;
             }
         });
 
         // Harita görüntüsünü güncelle
         updateShareMap();
+    }
+
+    // Bölge isimlerini düzgün göstermek için yardımcı fonksiyon
+    function getRegionDisplayName(region) {
+        const displayNames = {
+            marmara: 'Marmara',
+            ege: 'Ege',
+            akdeniz: 'Akdeniz',
+            icAnadolu: 'İç Anadolu',
+            karadeniz: 'Karadeniz',
+            doguAnadolu: 'Doğu Anadolu',
+            guneydoguAnadolu: 'Güneydoğu Anadolu'
+        };
+        return displayNames[region] || region;
     }
 
     function updateShareMap() {

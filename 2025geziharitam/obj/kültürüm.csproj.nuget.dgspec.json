@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mehme\\source\\repos\\kültürüm\\kültürüm\\kültürüm.csproj": {}
+    "C:\\Users\\mehme\\source\\repos\\2025geziharitam\\2025geziharitam\\kültürüm.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mehme\\source\\repos\\kültürüm\\kültürüm\\kültürüm.csproj": {
+    "C:\\Users\\mehme\\source\\repos\\2025geziharitam\\2025geziharitam\\kültürüm.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mehme\\source\\repos\\kültürüm\\kültürüm\\kültürüm.csproj",
+        "projectUniqueName": "C:\\Users\\mehme\\source\\repos\\2025geziharitam\\2025geziharitam\\kültürüm.csproj",
         "projectName": "kültürüm",
-        "projectPath": "C:\\Users\\mehme\\source\\repos\\kültürüm\\kültürüm\\kültürüm.csproj",
+        "projectPath": "C:\\Users\\mehme\\source\\repos\\2025geziharitam\\2025geziharitam\\kültürüm.csproj",
         "packagesPath": "C:\\Users\\mehme\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mehme\\source\\repos\\kültürüm\\kültürüm\\obj\\",
+        "outputPath": "C:\\Users\\mehme\\source\\repos\\2025geziharitam\\2025geziharitam\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
