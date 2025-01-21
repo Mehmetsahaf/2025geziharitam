@@ -30,3 +30,11 @@ Gezi haritası ve istatistikler görsel olarak paylaşılabilir.
 
 Çıktı olarak indirilebilir.
 
+
+📧 İletişim
+
+Herhangi bir sorunuz veya öneriniz varsa bizimle iletişime geçmekten çekinmeyin:
+
+📩 E-posta: mehmetsahafb@gmail.com
+
+
