@@ -1,4 +1,4 @@
-###🗺️ Gezi Haritası Takip Uygulaması
+###🗺️ Gezi Haritası Takip Uygulaması###
 
 ##📖 Proje Hakkında
 
