@@ -1,7 +1,5 @@
 {
   "name": "2025geziharitam",
-  // ...
-  "scripts": {
-    // ...
-  }
+  "version": "1.0.0",
+  "private": true
 } 

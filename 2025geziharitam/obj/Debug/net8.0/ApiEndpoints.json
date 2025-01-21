@@ -1,0 +1,50 @@
+[
+  {
+    "ContainingType": "k\u00FClt\u00FCr\u00FCm.Controllers.VisitsController",
+    "Method": "CheckVisit",
+    "RelativePath": "api/Visits/check/{cityName}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cityName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "k\u00FClt\u00FCr\u00FCm.Controllers.VisitsController",
+    "Method": "DeleteVisit",
+    "RelativePath": "api/Visits/delete/{cityName}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cityName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "k\u00FClt\u00FCr\u00FCm.Controllers.VisitsController",
+    "Method": "SaveVisit",
+    "RelativePath": "api/Visits/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "k\u00FClt\u00FCr\u00FCm.Controllers.SaveVisitRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

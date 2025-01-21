@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("kültürüm")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09a2f58412012490e442e05e43a2bddfc1c98b07")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4eeae439889a9dcee23feb83b9b25c7b570ad7db")]
 [assembly: System.Reflection.AssemblyProductAttribute("kültürüm")]
 [assembly: System.Reflection.AssemblyTitleAttribute("kültürüm")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
