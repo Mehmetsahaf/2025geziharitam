@@ -1,5 +1,10 @@
 # 🗺️ Gezi Haritası Takip Uygulaması #
 
+
+## 📺Proje Videosu Linki ##
+https://youtu.be/98G26hq0I28
+
+
 ## 📖 Proje Hakkında ## 
 
 Bu proje, kullanıcıların Türkiye'deki şehirleri gezmelerini takip etmelerine yardımcı olan interaktif bir web uygulamasıdır. Kullanıcılar harita üzerinde gezdikleri şehirleri işaretleyebilir, notlar alabilir ve gezi istatistiklerini görüntüleyebilirler.
